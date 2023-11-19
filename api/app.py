@@ -1,19 +1,15 @@
-from flask import Flask, Response
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
+from flask import Flask
 
-uri = "mongodb+srv://123:123@sztcluster.edm9ind.mongodb.net/?retryWrites=true&w=majority"
+from mongoApi import mongo_instance
+
 app = Flask(__name__)
-client = MongoClient(uri, server_api=ServerApi('1'))
 @app.route('/')
 def base():
-    try:
-        client.admin.command('ping')
-        print("Pinged your deployment. You successfully connected to MongoDB!")
-    except Exception as e:
-        print(e)
+    result = mongo_instance.read("City")
+    for item in result:
+        print(item)
     return "haha"
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001, host='0.0.0.0')
+    app.run(debug=True, port=5001, host='127.0.0.1')
