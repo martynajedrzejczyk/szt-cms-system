@@ -1,11 +1,11 @@
 from flask import Flask
 
-from mongoApi import mongo_instance
+from mongoApi import dbInstance
 
 app = Flask(__name__)
 @app.route('/')
 def base():
-    result = mongo_instance.read("City")
+    result = dbInstance.read("City")
     for item in result:
         print(item)
     return "haha"

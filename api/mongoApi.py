@@ -35,4 +35,4 @@ class MongoApi:
         output = {'Status': 'Successfully Deleted' if response.deleted_count > 0 else "Document not found."}
         return output
 
-mongo_instance = MongoApi()
+dbInstance = MongoApi()
