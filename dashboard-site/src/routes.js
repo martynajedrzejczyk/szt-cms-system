@@ -1,4 +1,8 @@
 import React from 'react'
+import Cities from './views/cms/Cities'
+import Employees from './views/cms/Employees'
+import Opinions from './views/cms/Opinions'
+import Services from './views/cms/Services'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
@@ -56,6 +60,10 @@ const routes = [
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
+  { path: '/cms/cities', name: 'Cities', element: Cities },
+  { path: '/cms/employees', name: 'Employees', element: Employees },
+  { path: '/cms/opinions', name: 'Opinions', element: Opinions },
+  { path: '/cms/services', name: 'Services', element: Services },
   { path: '/base', name: 'Base', element: Cards, exact: true },
   { path: '/base/accordion', name: 'Accordion', element: Accordion },
   { path: '/base/breadcrumbs', name: 'Breadcrumbs', element: Breadcrumbs },
