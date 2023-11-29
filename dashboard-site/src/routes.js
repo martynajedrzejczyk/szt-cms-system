@@ -3,6 +3,8 @@ import Cities from './views/cms/Cities'
 import Employees from './views/cms/Employees'
 import Opinions from './views/cms/Opinions'
 import Services from './views/cms/Services'
+import SocialMedia from './views/cms/SocialMedia'
+import Navigation from './views/cms/Navigation'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
@@ -64,6 +66,8 @@ const routes = [
   { path: '/cms/employees', name: 'Employees', element: Employees },
   { path: '/cms/opinions', name: 'Opinions', element: Opinions },
   { path: '/cms/services', name: 'Services', element: Services },
+  { path: '/cms/social-media', name: 'Social Media', element: SocialMedia },
+  { path: '/cms/navigation', name: 'Navigation', element: Navigation },
   { path: '/base', name: 'Base', element: Cards, exact: true },
   { path: '/base/accordion', name: 'Accordion', element: Accordion },
   { path: '/base/breadcrumbs', name: 'Breadcrumbs', element: Breadcrumbs },

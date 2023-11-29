@@ -43,21 +43,23 @@ const Opinions = () => {
           <h1>Opinie</h1>
         </CCol>
       </CRow>
-      <CCol xs={8}>
-        <CRow>
-          <CButtonGroup role="group" aria-label="Basic outline example">
-            <CButton color="primary" variant="outline" active={false}>
-              Nowe opinie
-            </CButton>
-            <CButton color="primary" variant="outline">
-              Odrzucone opinie
-            </CButton>
-            <CButton color="primary" variant="outline">
-              Przyjęte opinie
-            </CButton>
-          </CButtonGroup>
-        </CRow>
-      </CCol>
+      <div className="d-flex p-2 docs-highlight justify-content-center">
+        <CCol xs={8}>
+          <CRow>
+            <CButtonGroup role="group" aria-label="Basic outline example">
+              <CButton color="primary" variant="outline" active={false}>
+                Nowe opinie
+              </CButton>
+              <CButton color="primary" variant="outline">
+                Odrzucone opinie
+              </CButton>
+              <CButton color="primary" variant="outline">
+                Przyjęte opinie
+              </CButton>
+            </CButtonGroup>
+          </CRow>
+        </CCol>
+      </div>
       <CTable columns={columns} responsive />
     </CCol>
   )
