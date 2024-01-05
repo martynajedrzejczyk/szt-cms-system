@@ -1,5 +1,6 @@
+from flask import Flask
 from app import app
-from models.user import User
+from user.models import User
 
 @app.route('/user/signup', methods=['POST'])
 def signup():
