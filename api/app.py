@@ -20,11 +20,12 @@ def login_required(f):
       return f(*args, **kwargs)
     else:
       return redirect('/')
-  
+
   return wrap
 
 # Routes
 from user import routes
+from city import routes
 
 @app.route('/')
 def home():
