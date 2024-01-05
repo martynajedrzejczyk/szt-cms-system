@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, session, redirect
+from flask_cors import CORS
 from passlib.hash import pbkdf2_sha256
 from app import db
 import uuid
@@ -21,10 +22,8 @@ class User:
       "email": request.form.get('email'),
       "password": request.form.get('password')
     }
-
     # Encrypt the password
     user['password'] = pbkdf2_sha256.encrypt(user['password'])
-
     # Check for existing email address
     if db.users.find_one({ "email": user['email'] }):
       return jsonify({ "error": "Email address already in use" }), 400
@@ -43,7 +42,6 @@ class User:
     user = db.users.find_one({
       "email": request.form.get('email')
     })
-
     if user and pbkdf2_sha256.verify(request.form.get('password'), user['password']):
       return self.start_session(user)
     
