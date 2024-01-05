@@ -6,6 +6,7 @@ import {
   cilBell,
   cilCalculator,
   cilChartPie,
+  cilColumns,
   cilCursor,
   cilDescription,
   cilDog,
@@ -82,6 +83,12 @@ const _nav = [
     name: 'Dane firmy',
     to: '/cms/social-media',
     icon: <CIcon icon={cilDog} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Strony',
+    to: '/cms/pages',
+    icon: <CIcon icon={cilColumns} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
