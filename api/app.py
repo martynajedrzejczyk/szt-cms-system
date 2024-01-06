@@ -26,6 +26,8 @@ def login_required(f):
 # Routes
 import city.routes
 import user.routes
+import component_type.routes
+import contact.routes
 
 @app.route('/')
 def home():
