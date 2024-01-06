@@ -24,8 +24,8 @@ def login_required(f):
   return wrap
 
 # Routes
-from user import routes
-from city import routes
+import city.routes
+import user.routes
 
 @app.route('/')
 def home():
