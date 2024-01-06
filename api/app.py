@@ -20,11 +20,15 @@ def login_required(f):
       return f(*args, **kwargs)
     else:
       return redirect('/')
-  
+
   return wrap
 
 # Routes
-from user import routes
+import city.routes
+import user.routes
+import component_type.routes
+import contact.routes
+import opinion.routes
 
 @app.route('/')
 def home():
