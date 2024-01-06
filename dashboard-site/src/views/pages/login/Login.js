@@ -16,6 +16,7 @@ import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import { useNavigate } from 'react-router-dom'
 import { ReactSession } from 'react-client-session';
+import { postLogin } from 'src/api/postData'
 
 const Login = () => {
   const username = ReactSession.get("username");
@@ -23,7 +24,8 @@ const Login = () => {
 
   const handleLogin = () => {
     console.log('login')
-    navigate('/dashboard');
+    postLogin('test2@test.pl', '123')
+    // navigate('/dashboard');
   }
 
   const handleChangePassword = () => {

@@ -2,8 +2,11 @@ from flask import Flask, render_template, session, redirect
 from functools import wraps
 import pymongo
 from pymongo.server_api import ServerApi
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 
 # Database
@@ -27,6 +30,7 @@ def login_required(f):
 from user import routes
 
 @app.route('/')
+@cross_origin()
 def home():
   return render_template('home.html')
 
