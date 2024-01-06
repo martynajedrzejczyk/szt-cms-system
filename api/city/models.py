@@ -65,7 +65,7 @@ class City:
             data = request.get_json()
             existing_city = db['City'].find_one({'name': data['name']})
             if existing_city:
-                db['City'].delete_one({'name': request.args.get('name')})
+                db['City'].delete_one({'name': data['name']})
                 return jsonify(
                     {'status': 'success', 'message': f"City {data['name']} deleted successfully"}), 200
             else:
