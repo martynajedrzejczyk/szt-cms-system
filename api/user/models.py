@@ -48,6 +48,7 @@ class User:
       "email": request.form.get('email')
     })
     if user and pbkdf2_sha256.verify(request.form.get('password'), user['password']):
+      db["User"].update_one({'email':request.form.get('email')},{'$set':{'last_login':datetime.datetime.today()}})
       return self.start_session(user)
     
     return jsonify({ "error": "Invalid login credentials" }), 401
