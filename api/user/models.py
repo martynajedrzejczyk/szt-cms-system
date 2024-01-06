@@ -1,4 +1,6 @@
-from flask import Flask, jsonify, request, session, redirect
+import datetime
+from bson import json_util
+from flask import jsonify, request, session, redirect
 from passlib.hash import pbkdf2_sha256
 from app import db
 import uuid
@@ -18,18 +20,20 @@ class User:
     user = {
       "_id": uuid.uuid4().hex,
       "name": request.form.get('name'),
+      "surname": request.form.get('surname'),
       "email": request.form.get('email'),
-      "password": request.form.get('password')
+      "password": request.form.get('password'),
+      "created_at": datetime.datetime.today(),
+      "last_login": datetime.datetime.today(),
+      "last_ip": str(request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
     }
-
     # Encrypt the password
     user['password'] = pbkdf2_sha256.encrypt(user['password'])
-
     # Check for existing email address
-    if db.users.find_one({ "email": user['email'] }):
+    if db["User"].find_one({ "email": user['email'] }):
       return jsonify({ "error": "Email address already in use" }), 400
 
-    if db.users.insert_one(user):
+    if db["User"].insert_one(user):
       return self.start_session(user)
 
     return jsonify({ "error": "Signup failed" }), 400
@@ -40,15 +44,37 @@ class User:
   
   def login(self):
 
-    user = db.users.find_one({
-      "login": request.form.get('login')
+    user = db["User"].find_one({
+      "email": request.form.get('email')
     })
-
-    todo_data = request.get_json()
-    print(todo_data)
-    if user:
+    if user and pbkdf2_sha256.verify(request.form.get('password'), user['password']):
+      db["User"].update_one({'email':request.form.get('email')},{'$set':{'last_login':datetime.datetime.today()}})
       return self.start_session(user)
     # if user and pbkdf2_sha256.verify(pbkdf2_sha256.encrypt(request.form.get('password')), user['password']):
     #   return self.start_session(user)
     
     return jsonify({ "error": "Invalid login credentials" }), 401
+
+  def read_all(self):
+    try:
+      document = list(db['User'].find())
+      for user in document:
+        user['_id'] = str(user['_id'])
+      if document:
+        return json_util.dumps(document), 200
+      else:
+        return jsonify({'status': 'error', 'message': 'Users not found'}), 400
+    except Exception as e:
+      return jsonify({'status': 'error', 'message': str(e)}), 400
+
+  def read(self):
+    try:
+      data = request.get_json()
+      document = db['User'].find_one({'name': data['name']})
+      if document:
+        document['_id'] = str(document['_id'])
+        return json_util.dumps(document), 200
+      else:
+        return jsonify({'status': 'error', 'message': 'City not found'}), 400
+    except Exception as e:
+      return jsonify({'status': 'error', 'message': str(e)}), 400

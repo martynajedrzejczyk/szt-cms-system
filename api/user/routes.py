@@ -1,4 +1,3 @@
-from flask import Flask
 from app import app
 from user.models import User
 
@@ -13,3 +12,10 @@ def signout():
 @app.route('/user/login', methods=['POST'])
 def login():
   return User().login()
+
+@app.route('/users', methods=['GET'])
+def read_all_users():
+  return User().read_all()
+@app.route('/user', methods=['GET'])
+def read_user():
+  return User().read()
