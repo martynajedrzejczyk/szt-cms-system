@@ -1,4 +1,4 @@
-from bson import json_util
+from bson import json_util, ObjectId
 from flask import jsonify, request
 from app import db
 
@@ -50,9 +50,9 @@ class City:
 
             if 'name' not in update_data or 'visible' not in update_data:
                 return jsonify({'status': 'error', 'message': 'Missing required fields'})
-            existing_city = db['City'].find_one({'name': update_data['name']})
+            existing_city = db['City'].find_one({'_id': ObjectId(update_data['_id'])})
             if existing_city:
-                db['City'].update_one({'name': update_data['name']}, {'$set': {'name': update_data['name'],
+                db['City'].update_one({'name': ObjectId(update_data['_id'])}, {'$set': {'name': update_data['name'],
                                                                                'visible': update_data['visible']}})
                 return jsonify(update_data['name'], ' successfully updated.'), 200
             else:
@@ -63,9 +63,9 @@ class City:
     def delete(self):
         try:
             data = request.get_json()
-            existing_city = db['City'].find_one({'name': data['name']})
+            existing_city = db['City'].find_one({'_id': ObjectId(data['_id'])})
             if existing_city:
-                db['City'].delete_one({'name': data['name']})
+                db['City'].delete_one({'_id': ObjectId(data['_id'])})
                 return jsonify(
                     {'status': 'success', 'message': f"City {data['name']} deleted successfully"}), 200
             else:
