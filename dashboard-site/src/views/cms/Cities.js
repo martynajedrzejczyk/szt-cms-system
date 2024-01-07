@@ -27,6 +27,7 @@ const Cities = () => {
     console.log(popupInfo.id, name, visible)
     putCity(popupInfo.id, name, visible).then(() => {
       loadData();
+      setPopupOpen(false);
     })
   }
 
