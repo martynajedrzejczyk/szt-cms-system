@@ -16,6 +16,19 @@ export const postLogin = async (email, password) => {
     return response.data;
 }
 
+export const postService = async (name, visible, description, price) => {
+    const response = await axios.post(`${databaseURL}service`, {
+        // data: { name, visible, description, price },
+        // headers: { "Content-Type": "application/json" },
+        name,
+        visible,
+        description,
+        price
+    });
+    console.log(response)
+    return response.data;
+}
+
 export const postCity = async (name, visible) => {
     const response = await axios.post(`${databaseURL}city`, {
         name,

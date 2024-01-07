@@ -8,6 +8,11 @@ export const getCities = async () => {
     return response.data;
 }
 
+export const getServices = async () => {
+    const response = await axios.get(`${databaseURL}services`);
+    return response.data;
+}
+
 export const useUsers = () => {
     const [users, setUsers] = useState([]);
     useEffect(() => {

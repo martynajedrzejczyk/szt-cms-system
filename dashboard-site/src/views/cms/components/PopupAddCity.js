@@ -1,5 +1,5 @@
 import { CButton, CCol, CFormCheck, CFormInput, CFormLabel, CRow } from "@coreui/react";
-import "./PopupAddCity.css"
+import "./Popup.css"
 import React from 'react';
 
 const PopupAddCity = ({ name, visible, closePopup, postData }) => {
@@ -23,7 +23,9 @@ const PopupAddCity = ({ name, visible, closePopup, postData }) => {
                 <CFormLabel htmlFor="inputtext" className="col-sm-3 col-form-label">
                     Widoczność
                 </CFormLabel>
-                <CFormCheck checked={newVisibility} className="col-sm-4" id="inputtext" onChange={(e) => { setNewVisibility(e.target.checked) }} />
+                <CCol sm={8}>
+                    <CFormCheck checked={newVisibility} className="col-sm-4" id="inputtext" onChange={(e) => { setNewVisibility(e.target.checked) }} />
+                </CCol>
             </CRow>
             <CRow className="mb-3 popup-buttons">
                 <CButton color="primary" className="col-sm-2" onClick={() => postData(newName, newVisibility)}>Dodaj</CButton>

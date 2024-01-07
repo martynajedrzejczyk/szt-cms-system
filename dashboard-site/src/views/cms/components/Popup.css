@@ -11,6 +11,23 @@
     border-width: 1px;
     /* shadow */
     padding: 20px;
+    overflow: auto;
+}
+
+.popup-container-large {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    width: 50%;
+    height: 60%;
+    border-color: rgb(124, 124, 124);
+    border-style: solid;
+    border-width: 1px;
+    /* shadow */
+    padding: 20px;
+    overflow: auto;
 }
 
 .popup-header {
@@ -30,4 +47,8 @@
     justify-content: space-evenly;
     align-items: center;
     margin-top: 20px;
+}
+
+.textarea-input {
+    resize: none;
 }
