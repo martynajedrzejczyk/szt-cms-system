@@ -20,7 +20,7 @@ class Component_type:
     def read(self):
         try:
             data = request.get_json()
-            document = db['Component_type'].find_one({'name': data['name']})
+            document = db['Component_type'].find_one({'_id': data['_id']})
             if document:
                 document['_id'] = str(document['_id'])
                 return json_util.dumps(document), 200
@@ -50,7 +50,7 @@ class Component_type:
 
             if 'name' not in update_data:
                 return jsonify({'status': 'error', 'message': 'Missing required field'})
-            existing_component_type = db['Component_type'].find_one({'name': update_data['name']})
+            existing_component_type = db['Component_type'].find_one({'_id': update_data['_id']})
             if existing_component_type:
                 db['Component_type'].update_one({'name': update_data['name']}, {'$set': {'name': update_data['name']}})
                 return jsonify(update_data['name'], ' successfully updated.'), 200
@@ -62,12 +62,12 @@ class Component_type:
     def delete(self):
         try:
             data = request.get_json()
-            existing_component_type = db['Component_type'].find_one({'name': data['name']})
+            existing_component_type = db['Component_type'].find_one({'_id': data['_id']})
             if existing_component_type:
                 db['Component_type'].delete_one({'name': request.args.get('name')})
                 return jsonify(
-                    {'status': 'success', 'message': f"Component type {data['name']} deleted successfully"}), 200
+                    {'status': 'success', 'message': f"Component type {data['_id']} deleted successfully"}), 200
             else:
-                return jsonify({'status': 'error', 'message': f"Component type {data['name']} not found"}), 400
+                return jsonify({'status': 'error', 'message': f"Component type {data['_id']} not found"}), 400
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 400
