@@ -57,7 +57,7 @@ class Opinion:
 
             if '_id' not in update_data or 'status' not in update_data or 'reason' not in update_data:
                 return jsonify({'status': 'error', 'message': 'Missing required fields'})
-            existing_opinion = db['Opinion'].find_one({'name': ObjectId(update_data['_id'])})
+            existing_opinion = db['Opinion'].find_one({'_id': ObjectId(update_data['_id'])})
             if existing_opinion:
                 db['Opinon'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {'status': update_data['status'],
                                                                                'reason': update_data['reason'],
@@ -74,7 +74,7 @@ class Opinion:
             data = request.get_json()
             existing_opinion = db['Opinion'].find_one({'_id': ObjectId(data['_id'])})
             if existing_opinion:
-                db['City'].delete_one({'_id': ObjectId(data['_id'])})
+                db['Opinion'].delete_one({'_id': ObjectId(data['_id'])})
                 return jsonify(
                     {'status': 'success', 'message': f"Opinion deleted successfully"}), 200
             else:
