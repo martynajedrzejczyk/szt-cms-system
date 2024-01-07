@@ -1,28 +1,25 @@
 import axios from 'axios';
 import { databaseURL } from './url';
 
-export const postLogin = async (login, password) => {
-    const response = await axios.post(`${databaseURL}user/login`, {
-        login,
-        password,
+export const postLogin = async (email, password) => {
+    var bodyFormData = new FormData();
+    bodyFormData.append('email', email);
+    bodyFormData.append('password', password);
+
+    const response = await axios({
+        method: "post",
+        url: `${databaseURL}user/login`,
+        data: bodyFormData,
+        headers: { "Content-Type": "multipart/form-data" },
     });
     console.log(response)
     return response.data;
 }
 
-export const postCity = async (name) => {
+export const postCity = async (name, visible) => {
     const response = await axios.post(`${databaseURL}city`, {
         name,
-    });
-    console.log(response)
-    return response.data;
-}
-
-export const postContact = async (name, email, message) => {
-    const response = await axios.post(`${databaseURL}contact`, {
-        name,
-        email,
-        message,
+        visible
     });
     console.log(response)
     return response.data;
