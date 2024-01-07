@@ -28,10 +28,14 @@ def login_required(f):
 
 # Routes
 import city.routes
-import user.routes
 import component_type.routes
 import contact.routes
+import image.routes
+import navigation.routes
 import opinion.routes
+import service.routes
+import social_media.routes
+import user.routes
 
 @app.route('/')
 @cross_origin()

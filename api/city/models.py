@@ -1,76 +1,79 @@
-from bson import json_util
-from flask import jsonify, request
+from bson import ObjectId
+from flask import jsonify, request, abort
 from app import db
 
+def convert_object_ids(cities):
+    for city in cities:
+        city['_id'] = str(city['_id'])
+    return cities
 
 class City:
 
-    def read_all(self):
+    @staticmethod
+    def read_all():
         try:
-            document = list(db['City'].find())
-            for city in document:
-                city['_id'] = str(city['_id'])
-            if document:
-                return json_util.dumps(document), 200
+            cities = list(db['City'].find())
+            if cities:
+                return jsonify(convert_object_ids(cities)), 200
             else:
                 return jsonify({'status': 'error', 'message': 'Cities not found'}), 400
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 400
 
-    def read(self):
+    @staticmethod
+    def read():
         try:
             data = request.get_json()
-            document = db['City'].find_one({'name': data['name']})
-            if document:
-                document['_id'] = str(document['_id'])
-                return json_util.dumps(document), 200
+            city = db['City'].find_one({'_id': ObjectId(data['_id'])})
+            if city:
+                return jsonify(convert_object_ids([city])), 200
             else:
                 return jsonify({'status': 'error', 'message': 'City not found'}), 400
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 400
 
-    def write(self):
+    @staticmethod
+    def write():
         try:
             data = request.get_json()
-
             if 'name' not in data or 'visible' not in data:
-                return jsonify({'status': 'error', 'message': 'Missing required fields'})
+                return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
+
             result = db['City'].insert_one({'name': data['name'], 'visible': data['visible']})
 
             if result:
-                return jsonify(data['name'], ' successfully inserted.'), 200
+                return jsonify({'status': 'success', 'message': f'{data["name"]} successfully inserted.'}), 200
             else:
                 return jsonify({'status': 'error', 'message': 'Failed to add city'}), 400
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 400
 
-    def update(self):
+    @staticmethod
+    def update():
         try:
             update_data = request.get_json()
 
-            if 'name' not in update_data or 'visible' not in update_data:
-                return jsonify({'status': 'error', 'message': 'Missing required fields'})
-            existing_city = db['City'].find_one({'name': update_data['name']})
-            if existing_city:
-                db['City'].update_one({'name': update_data['name']}, {'$set': {'name': update_data['name'],
-                                                                               'visible': update_data['visible']}})
-                return jsonify(update_data['name'], ' successfully updated.'), 200
+            result = db['City'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
+                'name': update_data['name'],
+                'visible': update_data['visible']
+            }})
+
+            if result.modified_count > 0:
+                return jsonify({'status': 'success', 'message': f'{update_data["name"]} successfully updated.'}), 200
             else:
                 return jsonify({'status': 'error', 'message': f'City {update_data["name"]} not found'}), 400
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 400
 
-    def delete(self):
+    @staticmethod
+    def delete():
         try:
             data = request.get_json()
-            existing_city = db['City'].find_one({'name': data['name']})
-            print(existing_city)
+            result = db['City'].delete_one({'_id': ObjectId(data['_id'])})
 
-            if existing_city:
-                db['City'].delete_one({'name': data['name']})
-                return jsonify(
-                    {'status': 'success', 'message': f"City {data['name']} deleted successfully"}), 200
+            if result.deleted_count > 0:
+                return jsonify({'status': 'success', 'message': f'City {data["_id"]} deleted successfully'}), 200
             else:
-                return jsonify({'status': 'error', 'message': f"City {data['name']} not found"}), 400
+                return jsonify({'status': 'error', 'message': f'City {data["_id"]} not found'}), 400
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 400
