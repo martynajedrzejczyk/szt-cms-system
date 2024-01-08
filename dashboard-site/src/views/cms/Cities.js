@@ -41,7 +41,7 @@ const Cities = () => {
 
   const handleRowDelete = (id, name) => {
     console.log(id, name)
-    deleteCity(name).then(() => {
+    deleteCity(id).then(() => {
       loadData();
     })
   }
