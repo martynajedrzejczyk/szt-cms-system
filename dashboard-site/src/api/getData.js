@@ -13,6 +13,12 @@ export const getServices = async () => {
     return response.data;
 }
 
+export const getEmployees = async () => {
+    console.log(`${databaseURL}employees`);
+    const response = await axios.get(`${databaseURL}employees`);
+    return response.data;
+}
+
 export const useUsers = () => {
     const [users, setUsers] = useState([]);
     useEffect(() => {
