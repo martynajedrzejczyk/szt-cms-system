@@ -37,3 +37,16 @@ export const postCity = async (name, visible) => {
     console.log(response)
     return response.data;
 }
+
+export const postEmployee = async (name, surname, city, description, visible, image) => {
+    const response = await axios.post(`${databaseURL}employee`, {
+        name,
+        surname,
+        city,
+        description,
+        visible,
+        image
+    });
+    console.log(response)
+    return response.data;
+}
