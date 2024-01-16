@@ -7,10 +7,13 @@ import { cilSettings, cilTrash } from '@coreui/icons'
 import { formatDate } from 'src/utils/FormatData'
 import PopupAddEmployee from './components/PopupAddEmployee'
 import { postEmployee } from 'src/api/postData'
+import PopupEmployee from './components/PopupEmployee'
+import { putEmployee } from 'src/api/putData'
 
 const Employees = () => {
 
   const [employees, setEmployees] = React.useState([])
+  const [users, setUsers] = React.useState([])
   const [popupOpen, setPopupOpen] = React.useState(false);
   const [popupAddOpen, setPopupAddOpen] = React.useState(false);
   const [popupInfo, setPopupInfo] = React.useState({ name: '', surname: '', city: '', description: '', visible: true, image: '' });
@@ -26,16 +29,29 @@ const Employees = () => {
     })
   }
 
-  const handleRowEdit = (id, name, visible) => {
+  const handleRowEdit = (id, name, surname, city, description, visible, image) => {
+    setPopupInfo(() => ({ id, name, surname, city, description, visible, image }))
+    console.log(id, name)
+    setPopupOpen(true)
   }
 
-  const handleRowDelete = (name, visible) => {
+  const handleChangeEmployee = (id, name, surname, city, description, visible, image) => {
+    console.log("NEW", id, name, surname, city, description, visible, image)
+    putEmployee(id, name, surname, city, description, visible, image).then((data) => {
+      console.log(data);
+      loadData();
+    })
+    setPopupOpen(false)
+
+  }
+
+  const handleRowDelete = (id) => {
   }
 
   const columns = [
     { key: 'name', label: 'Imię', _props: { scope: 'col' } },
     { key: 'surname', label: 'Nazwisko', _props: { scope: 'col' } },
-    { key: 'city', label: 'Miasto', _props: { scope: 'col' } },
+    { key: 'city_name', label: 'Miasto', _props: { scope: 'col' } },
     { key: 'description', label: 'Opis', _props: { scope: 'col' }, _style: { width: '40%' } },
     { key: 'visible', label: 'Widoczność', _props: { scope: 'col' } },
     { key: 'created_at', label: 'Utworzono', _props: { scope: 'col' } },
@@ -49,71 +65,67 @@ const Employees = () => {
 
   const loadData = () => {
     getUsers().then((users) => {
-      console.log(users);
-      getEmployees().then((data) => {
-        setEmployees(data.map((employee) => {
-          return {
-            _id: employee._id,
-            name: employee.name,
-            surname: employee.surname,
-            city: employee.city,
-            description: employee.description,
-            visible: employee.visible ? 'tak' : 'nie',
-            created_at: formatDate(employee.created_at),
-            created_by: employee.created_by,
-            created_by_name: users.find((user) => user._id === employee.created_by).name + ' ' + users.find((user) => user._id === employee.created_by).surname,
-            modified_at: formatDate(employee.modified_at),
-            modified_by: employee.modified_by,
-            modified_by_name: users.find((user) => user._id === employee.modified_by).name + ' ' + users.find((user) => user._id === employee.modified_by).surname,
-            image: employee.image,
-            _cellProps: { id: { scope: 'row' } },
-            edit: (
-              <div
-                style={
-                  {
-                    cursor: 'pointer'
+      setUsers(users);
+      getCities().then((cities) => {
+        console.log(users);
+        console.log(cities);
+        setCities(cities);
+        getEmployees().then((data) => {
+          setEmployees(data.map((employee) => {
+            return {
+              _id: employee._id,
+              name: employee.name,
+              surname: employee.surname,
+              city: employee.city,
+              city_name: cities.find((city) => city._id === employee.city).name,
+              description: employee.description,
+              visible: employee.visible ? 'tak' : 'nie',
+              created_at: formatDate(employee.created_at),
+              created_by: employee.created_by,
+              created_by_name: users.find((user) => user._id === employee.created_by).name + ' ' + users.find((user) => user._id === employee.created_by).surname,
+              modified_at: formatDate(employee.modified_at),
+              modified_by: employee.modified_by,
+              modified_by_name: users.find((user) => user._id === employee.modified_by).name + ' ' + users.find((user) => user._id === employee.modified_by).surname,
+              image: employee.image,
+              _cellProps: { id: { scope: 'row' } },
+              edit: (
+                <div
+                  style={
+                    {
+                      cursor: 'pointer'
+                    }
                   }
-                }
-                onClick={() => {
-                  handleRowEdit(employee._id)
-                }}
-              >
-                <CIcon icon={cilSettings} size="xl" />
-              </div>
-            ),
-            delete: (
-              <div
-                style={
-                  {
-                    cursor: 'pointer'
+                  onClick={() => {
+                    handleRowEdit(employee._id, employee.name, employee.surname, employee.city, employee.description, employee.visible, employee.image)
+                  }}
+                >
+                  <CIcon icon={cilSettings} size="xl" />
+                </div>
+              ),
+              delete: (
+                <div
+                  style={
+                    {
+                      cursor: 'pointer'
+                    }
                   }
-                }
-                onClick={() => {
-                  handleRowDelete(employee._id)
-                }}
-              >
-                <CIcon icon={cilTrash} size="xl" />
-              </div>
-            )
-          }
-        }))
+                  onClick={() => {
+                    handleRowDelete(employee._id)
+                  }}
+                >
+                  <CIcon icon={cilTrash} size="xl" />
+                </div>
+              )
+            }
+          }))
+        })
       })
     })
-
-
   }
 
   useEffect(() => {
     loadData();
   }, [])
-
-  const handlePopupClose = () => {
-    setPopupOpen(false);
-  }
-
-  const handlePopupAddClose = () => {
-    setPopupAddOpen(false);
-  }
 
   const handlePopupAddOpen = () => {
     if (cities.length === 0) {
@@ -128,7 +140,7 @@ const Employees = () => {
   return (
     <CCol>
       {popupAddOpen ? <PopupAddEmployee cities={cities} closePopup={() => setPopupAddOpen(false)} postData={handlePostEmployee} /> : <></>}
-      {/* {popupOpen ? <PopupCity name={popupInfo.name} visible={popupInfo.visible} closePopup={closePopup} changeData={handleChangeCity} /> : <></>} */}
+      {popupOpen ? <PopupEmployee id={popupInfo.id} name={popupInfo.name} cityId={popupInfo.city} surname={popupInfo.surname} description={popupInfo.description} visible={popupInfo.visible} image={popupInfo.image} users={users} cities={cities} closePopup={() => setPopupOpen(false)} changeData={handleChangeEmployee} /> : <></>}
       <CRow>
         <CCol md={9}>
           <h1>Pracownicy</h1>
