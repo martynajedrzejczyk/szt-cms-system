@@ -66,14 +66,13 @@ class Employee:
     def update():
         try:
             update_data = request.get_json()
-
             result = db['Employee'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
                 'name': update_data['name'],
                 'surname': update_data['surname'],
                 'image': update_data['image'],
                 'description': update_data['description'],
                 'city': update_data['city'],
-                'modified_by': session['user']['_id'],
+                'modified_by': request.cookies.get('_id'),
                 'modified_at': datetime.datetime.today(),
                 'visible': update_data['visible']}})
 

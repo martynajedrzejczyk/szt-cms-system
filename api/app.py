@@ -5,7 +5,6 @@ from pymongo.server_api import ServerApi
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
-cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 
@@ -47,5 +46,6 @@ def home():
 
 @app.route('/dashboard/')
 @login_required
+@cross_origin()
 def dashboard():
   return render_template('dashboard.html')
