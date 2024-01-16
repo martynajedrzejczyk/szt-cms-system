@@ -6,6 +6,7 @@ from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
+cors = CORS(app,  resources={r"/foo": {"origins": "http://localhost:3000"}}, supports_credentials=True)
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 
 # Database
@@ -38,6 +39,15 @@ import page.routes
 import service.routes
 import social_media.routes
 import user.routes
+
+@app.after_request
+def creds(response):
+    response.headers.set('Access-Control-Allow-Origin', "http://localhost:3000")
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.set('Access-Control-Allow-Credentials', 'true')
+    # response.headers['Access-Control-Allow-Credentials'] = 'true'
+    return response
 
 @app.route('/')
 @cross_origin()

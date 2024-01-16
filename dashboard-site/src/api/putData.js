@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { databaseURL } from './url';
 
+const axiosWithCookies = axios.create({
+    withCredentials: true
+});
+
 export const putCity = async (id, name, visible) => {
     const response = await axios.put(`${databaseURL}city`, {
         "_id": id, name, visible
@@ -10,7 +14,7 @@ export const putCity = async (id, name, visible) => {
 }
 
 export const putEmployee = async (id, name, surname, city, description, visible, image) => {
-    const response = await axios.put(`${databaseURL}employee`,
+    const response = await axiosWithCookies.put(`${databaseURL}employee`,
         { "_id": id, name, surname, city, description, visible, image },
     );
     console.log(response)

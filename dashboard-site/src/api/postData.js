@@ -1,6 +1,10 @@
 import axios from 'axios';
 import { databaseURL } from './url';
 
+const axiosWithCookies = axios.create({
+    withCredentials: true
+});
+
 export const postLogin = async (email, password) => {
     var bodyFormData = new FormData();
     bodyFormData.append('email', email);
@@ -39,7 +43,7 @@ export const postCity = async (name, visible) => {
 }
 
 export const postEmployee = async (name, surname, city, description, visible, image) => {
-    const response = await axios.post(`${databaseURL}employee`, {
+    const response = await axiosWithCookies.post(`${databaseURL}employee`, {
         name,
         surname,
         city,

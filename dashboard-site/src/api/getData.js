@@ -23,6 +23,6 @@ export const getEmployees = async () => {
 }
 
 export const getUsers = async () => {
-    const response = await axios.get(`${databaseURL}users`);
+    const response = await axiosWithCookies.get(`${databaseURL}users`);
     return response.data;
 };
