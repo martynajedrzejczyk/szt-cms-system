@@ -1,6 +1,6 @@
 import datetime
 from bson import json_util
-from flask import jsonify, request, session, redirect
+from flask import jsonify, request, session, redirect, make_response
 from app import db
 import bcrypt
 import uuid
@@ -12,7 +12,15 @@ class User:
         del user['password']
         session['logged_in'] = True
         session['user'] = user
-        return jsonify(user), 200
+        resp = make_response(user)
+        resp.set_cookie('_id', user['_id'])
+        resp.set_cookie('name', user['name'])
+        resp.set_cookie('surname', user['surname'])
+        resp.set_cookie('email', user['email'])
+        resp.set_cookie('created_at', str(user['created_at']))
+        resp.set_cookie('last_login', str(user['last_login']))
+        resp.set_cookie('last_ip', user['last_ip'])
+        return resp, 200
 
     def signup(self):
         print(request.form)
@@ -41,7 +49,15 @@ class User:
 
     def signout(self):
         session.clear()
-        return redirect('/')
+        resp = make_response()
+        resp.set_cookie('_id', '')
+        resp.set_cookie('name', '')
+        resp.set_cookie('surname', '')
+        resp.set_cookie('email', '')
+        resp.set_cookie('created_at', '')
+        resp.set_cookie('last_login', '')
+        resp.set_cookie('last_ip', '')
+        return resp
 
     def login(self):
 
