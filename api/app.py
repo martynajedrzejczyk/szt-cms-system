@@ -2,8 +2,10 @@ from flask import Flask, render_template, session, redirect
 from functools import wraps
 import pymongo
 from pymongo.server_api import ServerApi
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = b'\xcc^\x91\xea\x17-\xd0W\x03\xa7\xf8J0\xac8\xc5'
 
 # Database
@@ -38,10 +40,12 @@ import social_media.routes
 import user.routes
 
 @app.route('/')
+@cross_origin()
 def home():
   return render_template('home.html')
 
 @app.route('/dashboard/')
 @login_required
+@cross_origin()
 def dashboard():
   return render_template('dashboard.html')
