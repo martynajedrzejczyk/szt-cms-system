@@ -1,7 +1,7 @@
 import datetime
 
 from bson import ObjectId
-from flask import jsonify, request, session
+from flask import jsonify, request, session, make_response
 from app import db
 
 def convert_object_ids(employees):
@@ -16,7 +16,9 @@ class Employee:
         try:
             employees = list(db['Employee'].find())
             if employees:
-                return jsonify(convert_object_ids(employees)), 200
+                resp = make_response(jsonify(convert_object_ids(employees)))
+               
+                return resp, 200
             else:
                 return jsonify({'status': 'error', 'message': 'Employees not found'}), 400
         except Exception as e:

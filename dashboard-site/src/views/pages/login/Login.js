@@ -16,14 +16,30 @@ import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import { useNavigate } from 'react-router-dom'
 import { ReactSession } from 'react-client-session';
+import { postLogin } from 'src/api/postData'
 
 const Login = () => {
-  const username = ReactSession.get("username");
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
   let navigate = useNavigate();
 
   const handleLogin = () => {
-    console.log('login')
-    navigate('/dashboard');
+    console.log('email', email, 'password', password)
+    postLogin(email, password).then((data) => {
+      const user = {
+        id: data._id,
+        email: data.email,
+        last_ip: data.last_ip,
+        last_login: data.last_login,
+        name: data.name,
+        surname: data.surname
+      }
+      console.log('data', data)
+      ReactSession.set("user", user);
+      console.log('user', user)
+      console.log('session user', ReactSession.get("user"));
+      navigate('/dashboard');
+    })
   }
 
   const handleChangePassword = () => {
@@ -45,7 +61,7 @@ const Login = () => {
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
-                      <CFormInput placeholder="Username" autoComplete="username" />
+                      <CFormInput placeholder="Username" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
                       <CInputGroupText>
@@ -55,6 +71,8 @@ const Login = () => {
                         type="password"
                         placeholder="Password"
                         autoComplete="current-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                       />
                     </CInputGroup>
                     <CRow>
