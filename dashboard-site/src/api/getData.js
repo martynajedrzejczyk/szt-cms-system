@@ -26,3 +26,8 @@ export const getUsers = async () => {
     const response = await axiosWithCookies.get(`${databaseURL}users`);
     return response.data;
 };
+
+export const getOpinions = async () => {
+    const response = await axiosWithCookies.get(`${databaseURL}opinions`);
+    return response.data;
+};
