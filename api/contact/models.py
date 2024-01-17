@@ -51,7 +51,7 @@ class Contact:
                 'postal_code': data['postal_code'],
                 'mail': data['mail'],
                 'modified_at': datetime.datetime.today(),
-                'modified_by': session['user']['_id']
+                'modified_by': request.cookies.get('_id')
             })
 
             if result:
@@ -75,7 +75,7 @@ class Contact:
                     'postal_code': update_data['postal_code'],
                     'mail': update_data['mail'],
                     'modified_at': datetime.datetime.today(),
-                    'modified_by': session['user']['_id']
+                    'modified_by': request.cookies.get('_id')
                 }})
                 return jsonify({'status': 'success', 'message': 'Successfully updated.'}), 200
             else:
