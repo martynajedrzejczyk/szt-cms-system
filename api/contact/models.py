@@ -75,7 +75,7 @@ class Contact:
                     'postal_code': update_data['postal_code'],
                     'mail': update_data['mail'],
                     'modified_at': datetime.datetime.today(),
-                    'modified_by': data['user_id']
+                    'modified_by': update_data['user_id']
                 }})
                 return jsonify({'status': 'success', 'message': 'Successfully updated.'}), 200
             else:
