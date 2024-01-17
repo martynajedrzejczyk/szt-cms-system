@@ -36,7 +36,6 @@ const Login = () => {
       }
       console.log('data', data)
       ReactSession.set("user", user);
-      console.log('user', user)
       console.log('session user', ReactSession.get("user"));
       navigate('/dashboard');
     })

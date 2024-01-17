@@ -9,6 +9,7 @@ import PopupAddEmployee from './components/PopupAddEmployee'
 import { postEmployee } from 'src/api/postData'
 import PopupEmployee from './components/PopupEmployee'
 import { putEmployee } from 'src/api/putData'
+import { deleteEmployee } from 'src/api/deleteData'
 
 const Employees = () => {
 
@@ -36,9 +37,7 @@ const Employees = () => {
   }
 
   const handleChangeEmployee = (id, name, surname, city, description, visible, image) => {
-    console.log("NEW", id, name, surname, city, description, visible, image)
     putEmployee(id, name, surname, city, description, visible, image).then((data) => {
-      console.log(data);
       loadData();
     })
     setPopupOpen(false)
@@ -46,6 +45,8 @@ const Employees = () => {
   }
 
   const handleRowDelete = (id) => {
+    deleteEmployee(id)
+    loadData();
   }
 
   const columns = [
@@ -67,8 +68,8 @@ const Employees = () => {
     getUsers().then((users) => {
       setUsers(users);
       getCities().then((cities) => {
-        console.log(users);
-        console.log(cities);
+        // console.log("users", users);
+        // console.log("cities", cities);
         setCities(cities);
         getEmployees().then((data) => {
           setEmployees(data.map((employee) => {
