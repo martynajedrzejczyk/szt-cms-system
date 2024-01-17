@@ -52,9 +52,9 @@ class Employee:
                 'description': data['description'],
                 'city': data['city'],
                 'created_at': datetime.datetime.today(),
-                'created_by': session['user']['_id'],
+                'created_by': request.cookies.get('_id'),
                 'modified_at': datetime.datetime.today(),
-                'modified_by': session['user']['_id'],
+                'modified_by': request.cookies.get('_id'),
                 'visible': data['visible']})
 
             if result:
