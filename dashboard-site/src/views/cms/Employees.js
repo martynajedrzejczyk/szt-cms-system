@@ -67,8 +67,8 @@ const Employees = () => {
     getUsers().then((users) => {
       setUsers(users);
       getCities().then((cities) => {
-        console.log(users);
-        console.log(cities);
+        // console.log("users", users);
+        // console.log("cities", cities);
         setCities(cities);
         getEmployees().then((data) => {
           setEmployees(data.map((employee) => {

@@ -21,7 +21,7 @@ export const postLogin = async (email, password) => {
 }
 
 export const postService = async (name, visible, description, price) => {
-    const response = await axios.post(`${databaseURL}service`, {
+    const response = await axiosWithCookies.post(`${databaseURL}service`, {
         // data: { name, visible, description, price },
         // headers: { "Content-Type": "application/json" },
         name,
@@ -34,7 +34,7 @@ export const postService = async (name, visible, description, price) => {
 }
 
 export const postCity = async (name, visible) => {
-    const response = await axios.post(`${databaseURL}city`, {
+    const response = await axiosWithCookies.post(`${databaseURL}city`, {
         name,
         visible
     });

@@ -6,7 +6,7 @@ const axiosWithCookies = axios.create({
 });
 
 export const putCity = async (id, name, visible) => {
-    const response = await axios.put(`${databaseURL}city`, {
+    const response = await axiosWithCookies.put(`${databaseURL}city`, {
         "_id": id, name, visible
     });
     console.log(response)
