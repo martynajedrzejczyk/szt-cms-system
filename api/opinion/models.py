@@ -49,7 +49,7 @@ class Opinion:
                 'description': data['description'],
                 'status': 'PENDING',
                 'moderated_at': datetime.datetime.today(),
-                'moderated_by': request.cookies.get('_id')
+                'moderated_by': data['user_id']
             })
 
             if result:
@@ -74,7 +74,7 @@ class Opinion:
                     'status': update_data['status'],
                     'reason': update_data['reason'],
                     'moderated_at': datetime.datetime.today(),
-                    'moderated_by': request.cookies.get('_id')
+                    'moderated_by': data['user_id']
                 }})
                 return jsonify({'status': 'success', 'message': 'Opinion successfully updated.'}), 200
             else:
