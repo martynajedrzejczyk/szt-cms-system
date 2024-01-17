@@ -47,7 +47,7 @@ class Opinion:
                 'stars': data['stars'],
                 'author_nick': data['author_nick'],
                 'description': data['description'],
-                'status': 'PENDING',
+                'status': data['status'],
                 'moderated_at': datetime.datetime.today(),
                 'moderated_by': data['user_id']
             })
