@@ -77,7 +77,6 @@ class Employee:
                 'modified_by': update_data['user_id'],
                 'modified_at': datetime.datetime.today(),
                 'visible': update_data['visible']}})
-            print(data['user_id'])
             if result.modified_count > 0:
                 return jsonify({'status': 'success', 'message': f'{update_data["name"]} successfully updated.'}), 200
             else:

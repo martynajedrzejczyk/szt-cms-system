@@ -74,7 +74,7 @@ class Opinion:
                     'status': update_data['status'],
                     'reason': update_data['reason'],
                     'moderated_at': datetime.datetime.today(),
-                    'moderated_by': data['user_id']
+                    'moderated_by': update_data['user_id']
                 }})
                 return jsonify({'status': 'success', 'message': 'Opinion successfully updated.'}), 200
             else:

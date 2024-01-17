@@ -67,10 +67,10 @@ class Page:
             update_data = request.get_json()
 
             result = db['Page'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
-                'name': update_data['name'],
+                'name': ['name'],
                 'endpoint': update_data['endpoint'],
                 'modified_at': datetime.datetime.today(),
-                'modified_by': data['user_id'],
+                'modified_by': update_data['user_id'],
                 'visible': update_data['visible'],
                 'navigation_id': update_data['navigation_id'],
                 'navigation_order': update_data['navigation_order'],

@@ -69,7 +69,7 @@ class Service:
                 'description': update_data['description'],
                 'price': update_data['price'],
                 'modified_at': datetime.datetime.today(),
-                'modified_by': data['user_id'],
+                'modified_by': update_data['user_id'],
                 'visible': update_data['visible']
             }})
 
