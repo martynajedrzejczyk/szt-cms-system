@@ -52,9 +52,9 @@ class Employee:
                 'description': data['description'],
                 'city': data['city'],
                 'created_at': datetime.datetime.today(),
-                'created_by': request.cookies.get('_id'),
+                'created_by': data['user_id'],
                 'modified_at': datetime.datetime.today(),
-                'modified_by': request.cookies.get('_id'),
+                'modified_by': data['user_id'],
                 'visible': data['visible']})
 
             if result:
@@ -74,10 +74,10 @@ class Employee:
                 'image': update_data['image'],
                 'description': update_data['description'],
                 'city': update_data['city'],
-                'modified_by': request.cookies.get('_id'),
+                'modified_by': update_data['user_id'],
                 'modified_at': datetime.datetime.today(),
                 'visible': update_data['visible']}})
-
+            print(data['user_id'])
             if result.modified_count > 0:
                 return jsonify({'status': 'success', 'message': f'{update_data["name"]} successfully updated.'}), 200
             else:

@@ -47,9 +47,9 @@ class Service:
                 'description': data['description'],
                 'price': data['price'],
                 'created_at': datetime.datetime.today(),
-                'created_by': request.cookies.get('_id'),
+                'created_by': data['user_id'],
                 'modified_at': datetime.datetime.today(),
-                'modified_by': request.cookies.get('_id'),
+                'modified_by': data['user_id'],
                 'visible': data['visible']})
 
             if result:
@@ -69,7 +69,7 @@ class Service:
                 'description': update_data['description'],
                 'price': update_data['price'],
                 'modified_at': datetime.datetime.today(),
-                'modified_by': request.cookies.get('_id'),
+                'modified_by': data['user_id'],
                 'visible': update_data['visible']
             }})
 
