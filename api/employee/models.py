@@ -1,13 +1,15 @@
 import datetime
 
 from bson import ObjectId
-from flask import jsonify, request, session, make_response
+from flask import jsonify, request, make_response
 from app import db
+
 
 def convert_object_ids(employees):
     for employee in employees:
         employee['_id'] = str(employee['_id'])
     return employees
+
 
 class Employee:
 
@@ -17,7 +19,7 @@ class Employee:
             employees = list(db['Employee'].find())
             if employees:
                 resp = make_response(jsonify(convert_object_ids(employees)))
-               
+
                 return resp, 200
             else:
                 return jsonify({'status': 'error', 'message': 'Employees not found'}), 400
@@ -41,8 +43,8 @@ class Employee:
         try:
             data = request.get_json()
             if ('name' not in data or 'surname' not in data or
-                'image' not in data or 'description'
-                not in data or 'city' not in data or 'visible' not in data):
+                    'image' not in data or 'description'
+                    not in data or 'city' not in data or 'visible' not in data):
                 return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
 
             result = db['Employee'].insert_one({
@@ -77,7 +79,6 @@ class Employee:
                 'modified_by': update_data['user_id'],
                 'modified_at': datetime.datetime.today(),
                 'visible': update_data['visible']}})
-            print(data['user_id'])
             if result.modified_count > 0:
                 return jsonify({'status': 'success', 'message': f'{update_data["name"]} successfully updated.'}), 200
             else:
