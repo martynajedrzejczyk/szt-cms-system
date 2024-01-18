@@ -8,17 +8,13 @@ import {
 } from '@coreui/react'
 import { getOpinions, getUsers } from 'src/api/getData';
 import CIcon from '@coreui/icons-react';
+import { cilDelete, cilSettings } from '@coreui/icons';
 
 const Opinions = () => {
   const [activeTab, setActiveTab] = React.useState(0);
   const [opinions, setOpinions] = React.useState([]);
 
   const columns = [
-    {
-      key: 'id',
-      label: ' ',
-      _props: { scope: 'col' },
-    },
     { key: 'author_nick', label: 'Autor', _props: { scope: 'col' } },
     { key: 'stars', label: 'Ocena', _props: { scope: 'col' } },
     { key: 'status', label: 'Stan', _props: { scope: 'col' } },
@@ -33,6 +29,7 @@ const Opinions = () => {
     { key: 'moderated_by_name', label: 'Zmoderowane przez', _props: { scope: 'col' } },
     { key: 'reason', label: 'Powód moderacji', _props: { scope: 'col' } },
     { key: 'edit', label: ' ', _props: { scope: 'col' }, _style: { width: '1%' } },
+    { key: 'delete', label: ' ', _props: { scope: 'col' }, _style: { width: '1%' } },
   ]
 
   const handleRowEdit = () => {
@@ -49,15 +46,17 @@ const Opinions = () => {
       getOpinions().then((data) => {
         console.log(data);
         setOpinions(data.map((opinion) => {
+          const moderatedByValue = users.find((user) => user._id === opinion.moderated_by).name + ' ' + users.find((user) => user._id === opinion.moderated_by).surname;
           return {
             _id: opinion._id,
             author_nick: opinion.author_nick,
             stars: opinion.stars,
             status: opinion.status,
             description: opinion.description,
-            moderated_at: opinion.moderated_at,
-            moderated_by_name: users.find((user) => user._id === opinion.moderated_by).nick,
-            reason: opinion.reason ? opinion.reason : 'Brak',
+            created_at: opinion.created_at,
+            moderated_at: opinion.moderated_at ? opinion.moderated_at : "-",
+            moderated_by_name: "XD",
+            reason: opinion.reason ? opinion.reason : 'Brak2',
             edit: (
               <CButtonGroup>
                 <CButton
@@ -67,7 +66,7 @@ const Opinions = () => {
                   size="sm"
                   onClick={() => handleRowEdit()}
                 >
-                  <CIcon name="cil-settings" />
+                  <CIcon icon={cilSettings} />
                 </CButton>
                 <CButton
                   color="danger"
@@ -76,7 +75,7 @@ const Opinions = () => {
                   size="sm"
                   onClick={() => handleRowDelete()}
                 >
-                  <CIcon name="cil-delete" />
+                  <CIcon icon={cilDelete} />
                 </CButton>
               </CButtonGroup>
             ),
@@ -114,7 +113,7 @@ const Opinions = () => {
           </CRow>
         </CCol>
       </div>
-      <CTable columns={columns} responsive />
+      <CTable columns={columns} items={opinions} responsive />
     </CCol>
   )
 }
