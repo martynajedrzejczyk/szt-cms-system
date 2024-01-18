@@ -31,3 +31,13 @@ export const getOpinions = async () => {
     const response = await axiosWithCookies.get(`${databaseURL}opinions`);
     return response.data;
 };
+
+export const getContact = async () => {
+    const response = await axiosWithCookies.get(`${databaseURL}contacts`);
+    return response.data;
+};
+
+export const getSocialMedia = async () => {
+    const response = await axiosWithCookies.get(`${databaseURL}social-media`);
+    return response.data;
+};
