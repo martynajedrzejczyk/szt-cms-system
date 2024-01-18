@@ -47,9 +47,11 @@ class Opinion:
                 'stars': data['stars'],
                 'author_nick': data['author_nick'],
                 'description': data['description'],
-                'status': data['status'],
-                'moderated_at': datetime.datetime.today(),
-                'moderated_by': data['user_id']
+                'status': 'Oczekujące',
+                'reason': '',
+                'created_at': datetime.datetime.today(),
+                'moderated_at': '',
+                'moderated_by': ''
             })
 
             if result:

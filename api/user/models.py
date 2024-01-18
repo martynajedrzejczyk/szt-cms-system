@@ -15,7 +15,6 @@ class User:
         resp = make_response(user)
         resp.set_cookie('_id', user['_id'])
         resp.set_cookie('name', user['name'])
-        resp.set_cookie('surname', user['surname'])
         resp.set_cookie('email', user['email'])
         resp.set_cookie('created_at', str(user['created_at']))
         resp.set_cookie('last_login', str(user['last_login']))
