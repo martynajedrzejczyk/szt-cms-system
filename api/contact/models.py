@@ -69,6 +69,7 @@ class Contact:
             existing_contact = db['Contact'].find_one({'company_name': update_data['company_name']})
             if existing_contact:
                 db['Contact'].update_one({'_id': existing_contact['_id']}, {'$set': {
+                    'company_name': update_data['company_name'],
                     'phone_number': update_data['phone_number'],
                     'street': update_data['street'],
                     'city': update_data['city'],
