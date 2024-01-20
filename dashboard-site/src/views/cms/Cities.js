@@ -10,6 +10,8 @@ import { putCity } from 'src/api/putData'
 import PopupAddCity from './components/PopupAddCity'
 import { postCity } from 'src/api/postData'
 import { deleteCity } from 'src/api/deleteData'
+import { ReactSession } from 'react-client-session';
+import { Navigate } from 'react-router-dom'
 
 const Cities = () => {
   const [rows, setRows] = React.useState([]);
@@ -109,20 +111,24 @@ const Cities = () => {
   }
 
   return (
-    <CCol>
-      {popupAddOpen ? <PopupAddCity closePopup={() => setPopupAddOpen(false)} postData={handlePostCity} /> : <></>}
-      {popupOpen ? <PopupCity name={popupInfo.name} visible={popupInfo.visible} closePopup={closePopup} changeData={handleChangeCity} /> : <></>}
-      <CRow>
-        <CCol md={9}>
-          <h1>Miasta</h1>
-          <h4>Lista miast, w których świadczone są usługi:</h4>
-        </CCol>
-        <CCol xs={2}>
-          <CButton color="primary" onClick={() => setPopupAddOpen(true)}>Dodaj miasto</CButton>
-        </CCol>
-      </CRow>
-      <CTable columns={columns} items={rows} />
-    </CCol>
+    <>    {
+      ReactSession.get("loggedIn") ? <CCol>
+        {popupAddOpen ? <PopupAddCity closePopup={() => setPopupAddOpen(false)} postData={handlePostCity} /> : <></>}
+        {popupOpen ? <PopupCity name={popupInfo.name} visible={popupInfo.visible} closePopup={closePopup} changeData={handleChangeCity} /> : <></>}
+        <CRow>
+          <CCol md={9}>
+            <h1>Miasta</h1>
+            <h4>Lista miast, w których świadczone są usługi:</h4>
+          </CCol>
+          <CCol xs={2}>
+            <CButton color="primary" onClick={() => setPopupAddOpen(true)}>Dodaj miasto</CButton>
+          </CCol>
+        </CRow>
+        <CTable columns={columns} items={rows} />
+      </CCol> : <Navigate to="/login" />
+    }
+    </>
+
   )
 }
 

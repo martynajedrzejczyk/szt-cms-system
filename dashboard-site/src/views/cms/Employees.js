@@ -10,6 +10,8 @@ import { postEmployee } from 'src/api/postData'
 import PopupEmployee from './components/PopupEmployee'
 import { putEmployee } from 'src/api/putData'
 import { deleteEmployee } from 'src/api/deleteData'
+import { ReactSession } from 'react-client-session';
+import { Navigate } from 'react-router-dom'
 
 const Employees = () => {
 
@@ -140,20 +142,24 @@ const Employees = () => {
   }
 
   return (
-    <CCol>
-      {popupAddOpen ? <PopupAddEmployee cities={cities} closePopup={() => setPopupAddOpen(false)} postData={handlePostEmployee} /> : <></>}
-      {popupOpen ? <PopupEmployee id={popupInfo.id} name={popupInfo.name} cityId={popupInfo.city} surname={popupInfo.surname} description={popupInfo.description} visible={popupInfo.visible} image={popupInfo.image} users={users} cities={cities} closePopup={() => setPopupOpen(false)} changeData={handleChangeEmployee} /> : <></>}
-      <CRow>
-        <CCol md={9}>
-          <h1>Pracownicy</h1>
-          <h4>Lista pracowników:</h4>
-        </CCol>
-        <CCol xs={2}>
-          <CButton color="primary" onClick={() => handlePopupAddOpen()}>Dodaj pracownika</CButton>
-        </CCol>
-      </CRow >
-      <CTable responsive hover columns={columns} items={employees} />
-    </CCol >
+    <>{ReactSession.get("loggedIn") ?
+      <CCol>
+        {popupAddOpen ? <PopupAddEmployee cities={cities} closePopup={() => setPopupAddOpen(false)} postData={handlePostEmployee} /> : <></>}
+        {popupOpen ? <PopupEmployee id={popupInfo.id} name={popupInfo.name} cityId={popupInfo.city} surname={popupInfo.surname} description={popupInfo.description} visible={popupInfo.visible} image={popupInfo.image} users={users} cities={cities} closePopup={() => setPopupOpen(false)} changeData={handleChangeEmployee} /> : <></>}
+        <CRow>
+          <CCol md={9}>
+            <h1>Pracownicy</h1>
+            <h4>Lista pracowników:</h4>
+          </CCol>
+          <CCol xs={2}>
+            <CButton color="primary" onClick={() => handlePopupAddOpen()}>Dodaj pracownika</CButton>
+          </CCol>
+        </CRow >
+        <CTable responsive hover columns={columns} items={employees} />
+      </CCol >
+      :
+      <Navigate to="/login" />}</>
+
   )
 }
 

@@ -3,6 +3,8 @@ import { CCol, CRow, CButton, CFormLabel, CFormInput, CFormSwitch } from '@coreu
 import { IMaskMixin } from 'react-imask'
 import { getContact, getSocialMedia, getUsers } from 'src/api/getData'
 import { putContact, putSocialMedia } from 'src/api/putData'
+import { ReactSession } from 'react-client-session';
+import { Navigate } from 'react-router-dom'
 
 const CFormInputWithMask = IMaskMixin(({ inputRef, ...props }) => (
   <CFormInput {...props} ref={inputRef} />
@@ -114,98 +116,100 @@ const SocialMedia = () => {
   }
 
   return (
-    <CCol>
-      <CRow>
-        <CCol xs={9}>
-          <h1>Dane firmy</h1>
-        </CCol>
-        <CCol xs={3}>
-          <CButton color="primary" onClick={() => saveContactChanges()}>Zapisz</CButton>
-        </CCol>
-      </CRow>
-      <CRow className="mb-3">
-        <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
-          Nazwa firmy
-        </CFormLabel>
-        <CCol sm={8}>
-          <CFormInput type="text" id="inputtext" value={name} onChange={(e) => setName(e.target.value)} />
-        </CCol>
-      </CRow>
-      <CRow className="mb-3">
-        <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
-          E-mail
-        </CFormLabel>
-        <CCol sm={8}>
-          <CFormInput type="email" placeholder="name@example.com" id="inputtext" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </CCol>
-      </CRow>
-      <CRow className="mb-3">
-        <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
-          Numer kontaktowy
-        </CFormLabel>
-        <CCol sm={8}>
-          <CFormInputWithMask mask="000 000 000" placeholder="000 000 000" id="inputtext" value={phone} onChange={(e) => setPhone(e.target.value)} />
-        </CCol>
-      </CRow>
-      <CRow className="mb-3">
-        <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
-          Adres firmy
-        </CFormLabel>
-        <CCol sm={8}>
-          <CFormInput type="text" id="inputtext" value={address} onChange={(e) => setAddress(e.target.value)} />
-        </CCol>
-      </CRow>
-      <CRow className="mb-3">
-        <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
-          Kod pocztowy
-        </CFormLabel>
-        <CCol sm={8}>
-          <CFormInput type="text" id="inputtext" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} />
-        </CCol>
-      </CRow>
-      <CRow className="mb-3">
-        <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
-          Miasto
-        </CFormLabel>
-        <CCol sm={8}>
-          <CFormInput type="text" id="inputtext" value={city} onChange={(e) => setCity(e.target.value)} />
-        </CCol>
-      </CRow>
-      <CRow>
+    <>{ReactSession.get("loggedIn") ?
+      <CCol>
         <CRow>
           <CCol xs={9}>
-            <h1>Social Media</h1>
+            <h1>Dane firmy</h1>
           </CCol>
           <CCol xs={3}>
-            <CButton color="primary" onClick={() => saveSocialMediaChanges()}>Zapisz</CButton>
+            <CButton color="primary" onClick={() => saveContactChanges()}>Zapisz</CButton>
           </CCol>
         </CRow>
         <CRow className="mb-3">
-          <CCol sm={2}>
-            <CFormSwitch label="Facebook" id="formSwitchCheckDefault" checked={facebook[1]} onChange={updateFbVisible} />
-          </CCol>
+          <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
+            Nazwa firmy
+          </CFormLabel>
           <CCol sm={8}>
-            <CFormInput type="text" id="inputtext" value={facebook[0]} onChange={updateFbLink} />
+            <CFormInput type="text" id="inputtext" value={name} onChange={(e) => setName(e.target.value)} />
           </CCol>
         </CRow>
         <CRow className="mb-3">
-          <CCol sm={2}>
-            <CFormSwitch label="Instagram" id="formSwitchCheckDefault" checked={instagram[1]} onChange={updateInstagramVisible} />
-          </CCol>
+          <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
+            E-mail
+          </CFormLabel>
           <CCol sm={8}>
-            <CFormInput type="text" id="inputtext" value={instagram[0]} onChange={updateInstagramLink} />
+            <CFormInput type="email" placeholder="name@example.com" id="inputtext" value={email} onChange={(e) => setEmail(e.target.value)} />
           </CCol>
         </CRow>
         <CRow className="mb-3">
-          <CCol sm={2}>
-            <CFormSwitch label="Twitter" id="formSwitchCheckDefault" checked={twitter[1]} onChange={updateTwitterVisible} />
-          </CCol>
+          <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
+            Numer kontaktowy
+          </CFormLabel>
           <CCol sm={8}>
-            <CFormInput type="text" id="inputtext" value={twitter[0]} onChange={updateTwitterLink} />
+            <CFormInputWithMask mask="000 000 000" placeholder="000 000 000" id="inputtext" value={phone} onChange={(e) => setPhone(e.target.value)} />
           </CCol>
         </CRow>
-      </CRow>
-    </CCol>
+        <CRow className="mb-3">
+          <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
+            Adres firmy
+          </CFormLabel>
+          <CCol sm={8}>
+            <CFormInput type="text" id="inputtext" value={address} onChange={(e) => setAddress(e.target.value)} />
+          </CCol>
+        </CRow>
+        <CRow className="mb-3">
+          <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
+            Kod pocztowy
+          </CFormLabel>
+          <CCol sm={8}>
+            <CFormInput type="text" id="inputtext" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} />
+          </CCol>
+        </CRow>
+        <CRow className="mb-3">
+          <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
+            Miasto
+          </CFormLabel>
+          <CCol sm={8}>
+            <CFormInput type="text" id="inputtext" value={city} onChange={(e) => setCity(e.target.value)} />
+          </CCol>
+        </CRow>
+        <CRow>
+          <CRow>
+            <CCol xs={9}>
+              <h1>Social Media</h1>
+            </CCol>
+            <CCol xs={3}>
+              <CButton color="primary" onClick={() => saveSocialMediaChanges()}>Zapisz</CButton>
+            </CCol>
+          </CRow>
+          <CRow className="mb-3">
+            <CCol sm={2}>
+              <CFormSwitch label="Facebook" id="formSwitchCheckDefault" checked={facebook[1]} onChange={updateFbVisible} />
+            </CCol>
+            <CCol sm={8}>
+              <CFormInput type="text" id="inputtext" value={facebook[0]} onChange={updateFbLink} />
+            </CCol>
+          </CRow>
+          <CRow className="mb-3">
+            <CCol sm={2}>
+              <CFormSwitch label="Instagram" id="formSwitchCheckDefault" checked={instagram[1]} onChange={updateInstagramVisible} />
+            </CCol>
+            <CCol sm={8}>
+              <CFormInput type="text" id="inputtext" value={instagram[0]} onChange={updateInstagramLink} />
+            </CCol>
+          </CRow>
+          <CRow className="mb-3">
+            <CCol sm={2}>
+              <CFormSwitch label="Twitter" id="formSwitchCheckDefault" checked={twitter[1]} onChange={updateTwitterVisible} />
+            </CCol>
+            <CCol sm={8}>
+              <CFormInput type="text" id="inputtext" value={twitter[0]} onChange={updateTwitterLink} />
+            </CCol>
+          </CRow>
+        </CRow>
+      </CCol>
+      : <Navigate to="/login" />}</>
   )
 }
 
