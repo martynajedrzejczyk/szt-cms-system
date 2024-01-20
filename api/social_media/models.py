@@ -57,6 +57,8 @@ class Social_media:
         try:
             update_data = request.get_json()
 
+            print(update_data)
+
             result = db['SocialMedia'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
                 'name': update_data['name'],
                 'link': update_data['link'],

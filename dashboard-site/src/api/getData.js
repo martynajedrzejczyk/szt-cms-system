@@ -38,6 +38,6 @@ export const getContact = async () => {
 };
 
 export const getSocialMedia = async () => {
-    const response = await axiosWithCookies.get(`${databaseURL}social-media`);
+    const response = await axiosWithCookies.get(`${databaseURL}socials`);
     return response.data;
 };

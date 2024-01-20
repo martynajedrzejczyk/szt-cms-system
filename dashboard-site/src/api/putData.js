@@ -41,3 +41,22 @@ export const putOpinion = async (id, status, reason) => {
     console.log(response)
     return response.data;
 }
+
+export const putContact = async (id, company_name, mail, phone_number, street, postal_code, city) => {
+    const user_id = ReactSession.get("user").id;
+    const response = await axiosWithCookies.put(`${databaseURL}contact`,
+        { "_id": id, company_name, mail, phone_number, street, postal_code, city, user_id },
+    );
+    console.log(response)
+    return response.data;
+}
+
+export const putSocialMedia = async (id, name, link, visible) => {
+    const user_id = ReactSession.get("user").id;
+    console.log(id, name, link, visible)
+    const response = await axiosWithCookies.put(`${databaseURL}social_media`,
+        { "_id": id, name, link, visible, user_id, "icon": "todo" },
+    );
+    console.log(response)
+    return response.data;
+}
