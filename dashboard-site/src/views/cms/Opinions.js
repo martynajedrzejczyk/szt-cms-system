@@ -13,6 +13,8 @@ import CIcon from '@coreui/icons-react';
 import { cilBan, cilCheckCircle, cilDelete, cilSettings } from '@coreui/icons';
 import { putOpinion } from 'src/api/putData';
 import { formatDate } from 'src/utils/FormatData';
+import { ReactSession } from 'react-client-session';
+import { Navigate } from 'react-router-dom'
 
 const Opinions = () => {
   const [activeTab, setActiveTab] = React.useState(0);
@@ -103,31 +105,32 @@ const Opinions = () => {
   }, [activeTab])
 
   return (
-    <CCol>
-      <CRow>
-        <CCol>
-          <h1>Opinie</h1>
-        </CCol>
-      </CRow>
-      <div className="d-flex p-2 docs-highlight justify-content-center">
-        <CCol xs={8}>
-          <CRow>
-            <CButtonGroup role="group" aria-label="Basic outline example">
-              <CButton color="primary" variant="outline" active={activeTab === 0} onClick={() => setActiveTab(0)}>
-                Oczekujące opinie
-              </CButton>
-              <CButton color="primary" variant="outline" active={activeTab === 1} onClick={() => setActiveTab(1)}>
-                Odrzucone opinie
-              </CButton>
-              <CButton color="primary" variant="outline" active={activeTab === 2} onClick={() => setActiveTab(2)}>
-                Przyjęte opinie
-              </CButton>
-            </CButtonGroup>
-          </CRow>
-        </CCol>
-      </div>
-      <CTable columns={columns} items={opinions} responsive />
-    </CCol>
+    <>{ReactSession.get("loggedIn") ?
+      <CCol>
+        <CRow>
+          <CCol>
+            <h1>Opinie</h1>
+          </CCol>
+        </CRow>
+        <div className="d-flex p-2 docs-highlight justify-content-center">
+          <CCol xs={8}>
+            <CRow>
+              <CButtonGroup role="group" aria-label="Basic outline example">
+                <CButton color="primary" variant="outline" active={activeTab === 0} onClick={() => setActiveTab(0)}>
+                  Oczekujące opinie
+                </CButton>
+                <CButton color="primary" variant="outline" active={activeTab === 1} onClick={() => setActiveTab(1)}>
+                  Odrzucone opinie
+                </CButton>
+                <CButton color="primary" variant="outline" active={activeTab === 2} onClick={() => setActiveTab(2)}>
+                  Przyjęte opinie
+                </CButton>
+              </CButtonGroup>
+            </CRow>
+          </CCol>
+        </div>
+        <CTable columns={columns} items={opinions} responsive />
+      </CCol> : <Navigate to="/login" />}</>
   )
 }
 

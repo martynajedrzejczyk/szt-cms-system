@@ -9,6 +9,8 @@ import PopupService from './components/PopupService'
 import { putService } from 'src/api/putData'
 import { deleteService } from 'src/api/deleteData'
 import { formatDate } from 'src/utils/FormatData'
+import { ReactSession } from 'react-client-session';
+import { Navigate } from 'react-router-dom'
 
 const Services = () => {
   const [services, setServices] = React.useState([])
@@ -118,19 +120,21 @@ const Services = () => {
     { key: 'delete', label: ' ', _props: { scope: 'col' }, _style: { width: '1%' } },
   ]
   return (
-    <CCol>
-      {popupAddOpen ? <PopupAddService closePopup={() => setPopupAddOpen(false)} postData={handlePostService} /> : <></>}
-      {popupOpen ? <PopupService id={popupInfo.id} name={popupInfo.name} visible={popupInfo.visible} description={popupInfo.description} price={popupInfo.price} closePopup={() => setPopupOpen(false)} changeData={handleChangeService} /> : <></>}
-      <CRow>
-        <CCol xs={8}>
-          <h1>Usługi</h1>
-        </CCol>
-        <CCol xs={4}>
-          <CButton color="primary" onClick={() => setPopupAddOpen(true)}>Dodaj usługę</CButton>
-        </CCol>
-      </CRow>
-      <CTable columns={columns} items={services} responsive />
-    </CCol>
+    <>{ReactSession.get("loggedIn") ?
+      <CCol>
+        {popupAddOpen ? <PopupAddService closePopup={() => setPopupAddOpen(false)} postData={handlePostService} /> : <></>}
+        {popupOpen ? <PopupService id={popupInfo.id} name={popupInfo.name} visible={popupInfo.visible} description={popupInfo.description} price={popupInfo.price} closePopup={() => setPopupOpen(false)} changeData={handleChangeService} /> : <></>}
+        <CRow>
+          <CCol xs={8}>
+            <h1>Usługi</h1>
+          </CCol>
+          <CCol xs={4}>
+            <CButton color="primary" onClick={() => setPopupAddOpen(true)}>Dodaj usługę</CButton>
+          </CCol>
+        </CRow>
+        <CTable columns={columns} items={services} responsive />
+      </CCol>
+      : <Navigate to="/login" />} </>
   )
 }
 
