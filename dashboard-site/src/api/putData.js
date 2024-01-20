@@ -32,3 +32,12 @@ export const putService = async (id, name, visible, description, price) => {
     console.log(response)
     return response.data;
 }
+
+export const putOpinion = async (id, status, reason) => {
+    const user_id = ReactSession.get("user").id;
+    const response = await axiosWithCookies.put(`${databaseURL}opinion`,
+        { "_id": id, status, reason, user_id },
+    );
+    console.log(response)
+    return response.data;
+}

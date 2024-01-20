@@ -34,6 +34,7 @@ const Employees = () => {
     setPopupInfo(() => ({ id, name, surname, city, description, visible, image }))
     console.log(id, name)
     setPopupOpen(true)
+    console.log(employees)
   }
 
   const handleChangeEmployee = (id, name, surname, city, description, visible, image) => {

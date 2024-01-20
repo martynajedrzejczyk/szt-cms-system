@@ -8,6 +8,7 @@ import { postService } from 'src/api/postData'
 import PopupService from './components/PopupService'
 import { putService } from 'src/api/putData'
 import { deleteService } from 'src/api/deleteData'
+import { formatDate } from 'src/utils/FormatData'
 
 const Services = () => {
   const [services, setServices] = React.useState([])
@@ -56,10 +57,10 @@ const Services = () => {
             name: service.name,
             description: service.description,
             price: service.price,
-            created_at: service.created_at,
+            created_at: formatDate(service.created_at),
             created_by: service.created_by,
             created_by_name: users.find((user) => user._id === service.created_by).name + ' ' + users.find((user) => user._id === service.created_by).surname,
-            modified_at: service.modified_at,
+            modified_at: formatDate(service.modified_at),
             modified_by: service.modified_by,
             modified_by_name: users.find((user) => user._id === service.modified_by).name + ' ' + users.find((user) => user._id === service.modified_by).surname,
             _cellProps: { id: { scope: 'row' } },
