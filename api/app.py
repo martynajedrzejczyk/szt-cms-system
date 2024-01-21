@@ -33,6 +33,7 @@ import component_type.routes
 import contact.routes
 import employee.routes
 import image.routes
+import image_info.routes
 import navigation.routes
 import opinion.routes
 import page.routes

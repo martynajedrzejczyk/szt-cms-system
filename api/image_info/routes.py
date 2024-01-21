@@ -1,25 +1,14 @@
 from app import app
 from image.models import Image
 
-
-@app.route('/images', methods=['GET'])
-def read_all_images():
-    return Image().read_all()
-
-
-@app.route('/image', methods=['GET'])
-def read_image():
+@app.route('/image_info', methods=['GET'])
+def read_image_info():
     return Image().read()
 
-
-@app.route('/image', methods=['POST'])
-def write_image():
+@app.route('/image_info', methods=['POST'])
+def write_image_info():
     return Image().write()
 
-
-@app.route('/image', methods=['PUT'])
-def update_image():
-    return Image().update()
-@ app.route('/image', methods=['DELETE'])
-def delete_image():
+@ app.route('/image_info', methods=['DELETE'])
+def delete_image_info():
     return Image().delete()
