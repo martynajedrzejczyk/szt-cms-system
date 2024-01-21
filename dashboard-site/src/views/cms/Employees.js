@@ -6,7 +6,7 @@ import CIcon from '@coreui/icons-react'
 import { cilSettings, cilTrash } from '@coreui/icons'
 import { formatDate } from 'src/utils/FormatData'
 import PopupAddEmployee from './components/PopupAddEmployee'
-import { postEmployee } from 'src/api/postData'
+import { postEmployee, postImage } from 'src/api/postData'
 import PopupEmployee from './components/PopupEmployee'
 import { putEmployee } from 'src/api/putData'
 import { deleteEmployee } from 'src/api/deleteData'
@@ -25,12 +25,14 @@ const Employees = () => {
 
   const handlePostEmployee = (name, surname, city, description, visible, image) => {
     console.log(name, surname, city, description, visible, image)
-    postEmployee(name, surname, city, description, visible, image).then((data) => {
+    postImage(image).then((data) => {
       console.log(data);
-      loadData();
-      setPopupAddOpen(false);
-      //TODO - wyskakuje user error przy dodawaniu pracownika
     })
+    // postEmployee(name, surname, city, description, visible, image).then((data) => {
+    //   console.log(data);
+    //   loadData();
+    //   setPopupAddOpen(false);
+    // })
   }
 
   const handleRowEdit = (id, name, surname, city, description, visible, image) => {
