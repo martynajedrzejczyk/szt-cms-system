@@ -20,6 +20,7 @@ const Employees = () => {
   const [popupOpen, setPopupOpen] = React.useState(false);
   const [popupAddOpen, setPopupAddOpen] = React.useState(false);
   const [popupInfo, setPopupInfo] = React.useState({ name: '', surname: '', city: '', description: '', visible: true, image: '' });
+  const [ifImageView, setIfImageView] = React.useState(false);
   const [cities, setCities] = React.useState([]);
 
   const handlePostEmployee = (name, surname, city, description, visible, image) => {
@@ -91,6 +92,7 @@ const Employees = () => {
               modified_by: employee.modified_by,
               modified_by_name: users.find((user) => user._id === employee.modified_by).name + ' ' + users.find((user) => user._id === employee.modified_by).surname,
               image: employee.image,
+              // image: <CButton color="primary" onClick={() => { }}>Wyświetl</CButton>,
               _cellProps: { id: { scope: 'row' } },
               edit: (
                 <div
