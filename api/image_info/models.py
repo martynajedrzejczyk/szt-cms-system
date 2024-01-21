@@ -14,17 +14,6 @@ def convert_object_ids(images):
 class Image_info:
 
     @staticmethod
-    def read_all():
-        try:
-            Images = list(db['ImageInfo'].find())
-            if Images:
-                return jsonify(convert_object_ids(Images)), 200
-            else:
-                return jsonify({'status': 'error', 'message': 'Images not found'}), 400
-        except Exception as e:
-            return jsonify({'status': 'error', 'message': str(e)}), 400
-
-    @staticmethod
     def read():
         try:
             data = request.get_json()
@@ -37,43 +26,20 @@ class Image_info:
             return jsonify({'status': 'error', 'message': str(e)}), 400
 
     @staticmethod
-    def write():
+    def write(name, image_path, order, created_by, visible):
         try:
-            data = request.get_json()
-            if 'name' not in data or 'image_data' not in data or 'order' not in data or 'visible' not in data:
-                return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
-
             result = db['ImageInfo'].insert_one({
-                'name': data['name'],
-                'image_path': data['image_path'],
-                'order': data['order'],
+                'name': name,
+                'image_path': image_path,
+                'order': order,
                 'created_at': datetime.datetime.today(),
-                'created_by': data['user_id'],
-                'visible': data['visible']})
+                'created_by': created_by,
+                'visible': visible})
 
             if result:
-                return jsonify({'status': 'success', 'message': f'{data["name"]} successfully inserted.'}), 200
+                return jsonify({'status': 'success', 'message': f'{name} successfully inserted.'}), 200
             else:
                 return jsonify({'status': 'error', 'message': 'Failed to add image'}), 400
-        except Exception as e:
-            return jsonify({'status': 'error', 'message': str(e)}), 400
-
-    @staticmethod
-    def update():
-        try:
-            update_data = request.get_json()
-
-            result = db['ImageInfo'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
-                'name': update_data['name'],
-                'image_path': update_data['image_path'],
-                'order': update_data['order'],
-                'visible': update_data['visible']
-            }})
-
-            if result.modified_count > 0:
-                return jsonify({'status': 'success', 'message': f'{update_data["name"]} successfully updated.'}), 200
-            else:
-                return jsonify({'status': 'error', 'message': f'Image {update_data["name"]} not found'}), 400
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 400
 
