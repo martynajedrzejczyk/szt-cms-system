@@ -5,6 +5,7 @@ import { cilPencil, cilSettings } from '@coreui/icons'
 import { ReactSession } from 'react-client-session';
 import { Navigate } from 'react-router-dom'
 import DataTable from 'react-data-table-component';
+import { useNavigate } from 'react-router-dom'
 
 const columns = [
     {
@@ -65,6 +66,16 @@ const data = [
 ]
 
 const Pages = () => {
+    let navigate = useNavigate();
+
+    const addPage = () => {
+        navigate('/cms/page-editor', "new");
+    }
+
+    const editPage = (id) => {
+        navigate('/pageEditor/' + id);
+    }
+
     return (
         <>{ReactSession.get("loggedIn") ?
             <CCol>
@@ -73,7 +84,7 @@ const Pages = () => {
                         <h1>Strony</h1>
                     </CCol>
                     <CCol xs={2}>
-                        <CButton color="primary">Dodaj stronę</CButton>
+                        <CButton color="primary" onClick={addPage}>Dodaj stronę</CButton>
                     </CCol>
                 </CRow>
                 <DataTable columns={columns} data={data} />

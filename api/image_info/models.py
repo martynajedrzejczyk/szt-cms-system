@@ -26,18 +26,18 @@ class Image_info:
             return jsonify({'status': 'error', 'message': str(e)}), 400
 
     @staticmethod
-    def write(name, image_path, order, created_by, visible):
+    def write(name, order, created_by, visible):
         try:
             result = db['ImageInfo'].insert_one({
                 'name': name,
-                'image_path': image_path,
                 'order': order,
                 'created_at': datetime.datetime.today(),
                 'created_by': created_by,
                 'visible': visible})
 
             if result:
-                return jsonify({'status': 'success', 'message': f'{name} successfully inserted.'}), 200
+                print(result.inserted_id)
+                return result.inserted_id
             else:
                 return jsonify({'status': 'error', 'message': 'Failed to add image'}), 400
         except Exception as e:

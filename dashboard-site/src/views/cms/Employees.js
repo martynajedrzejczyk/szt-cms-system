@@ -6,7 +6,7 @@ import CIcon from '@coreui/icons-react'
 import { cilSettings, cilTrash } from '@coreui/icons'
 import { formatDate } from 'src/utils/FormatData'
 import PopupAddEmployee from './components/PopupAddEmployee'
-import { postEmployee } from 'src/api/postData'
+import { postEmployee, postImage } from 'src/api/postData'
 import PopupEmployee from './components/PopupEmployee'
 import { putEmployee } from 'src/api/putData'
 import { deleteEmployee } from 'src/api/deleteData'
@@ -20,16 +20,19 @@ const Employees = () => {
   const [popupOpen, setPopupOpen] = React.useState(false);
   const [popupAddOpen, setPopupAddOpen] = React.useState(false);
   const [popupInfo, setPopupInfo] = React.useState({ name: '', surname: '', city: '', description: '', visible: true, image: '' });
+  const [ifImageView, setIfImageView] = React.useState(false);
   const [cities, setCities] = React.useState([]);
 
   const handlePostEmployee = (name, surname, city, description, visible, image) => {
     console.log(name, surname, city, description, visible, image)
-    postEmployee(name, surname, city, description, visible, image).then((data) => {
+    postImage(image).then((data) => {
       console.log(data);
-      loadData();
-      setPopupAddOpen(false);
-      //TODO - wyskakuje user error przy dodawaniu pracownika
     })
+    // postEmployee(name, surname, city, description, visible, image).then((data) => {
+    //   console.log(data);
+    //   loadData();
+    //   setPopupAddOpen(false);
+    // })
   }
 
   const handleRowEdit = (id, name, surname, city, description, visible, image) => {
@@ -91,6 +94,7 @@ const Employees = () => {
               modified_by: employee.modified_by,
               modified_by_name: users.find((user) => user._id === employee.modified_by).name + ' ' + users.find((user) => user._id === employee.modified_by).surname,
               image: employee.image,
+              // image: <CButton color="primary" onClick={() => { }}>Wyświetl</CButton>,
               _cellProps: { id: { scope: 'row' } },
               edit: (
                 <div

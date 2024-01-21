@@ -8,7 +8,7 @@ const PopupAddEmployee = ({ cities, closePopup, postData }) => {
     const [newCity, setNewCity] = React.useState("");
     const [newDescription, setNewDescription] = React.useState("");
     const [newVisibility, setNewVisibility] = React.useState(true);
-    const [newImage, setNewImage] = React.useState("TODO");
+    const [newImage, setNewImage] = React.useState("tupowinnobyczdjecie");
 
     const options = cities.map((city) => {
         return {
@@ -18,6 +18,13 @@ const PopupAddEmployee = ({ cities, closePopup, postData }) => {
     })
     // add 'Open this select menu', to the first option
     options.unshift({ value: '', label: 'Wybierz miasto', disabled: true, hidden: true })
+
+    const uploadImage = (e) => {
+        const file = e.target.files[0];
+        // const base64 = URL.createObjectURL(file);
+        // setNewImage(base64);
+        setNewImage(file);
+    }
 
     return (
         <div className="popup-container">
@@ -70,12 +77,13 @@ const PopupAddEmployee = ({ cities, closePopup, postData }) => {
                     Zdjęcie
                 </CFormLabel>
                 <CCol sm={8}>
-                    {/* TODO */}
+                    <CFormInput type="file" onChange={uploadImage} id="formFile" accept=".jpg, .jpeg, .png" />
                 </CCol>
             </CRow>
             <CRow className="mb-3 popup-buttons">
                 <CButton color="primary" className="col-sm-2" onClick={() => postData(newName, newSurname, newCity, newDescription, newVisibility, newImage)}>Dodaj</CButton>
                 <CButton color="primary" className="col-sm-2" onClick={closePopup}>Anuluj</CButton>
+                <CButton color="primary" className="col-sm-2" onClick={console.log(newImage)}>poka</CButton>
             </CRow>
 
         </div>
