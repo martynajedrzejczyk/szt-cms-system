@@ -1,0 +1,16 @@
+.opinions-moderate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.opinions-moderate button {
+    margin: 5px auto;
+    width: 100%;
+    max-width: 200px;
+    /* padding: 10px; */
+}

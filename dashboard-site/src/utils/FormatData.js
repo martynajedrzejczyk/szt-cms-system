@@ -7,8 +7,10 @@ export const formatDate = (date) => {
     day = day < 10 ? `0${day}` : day; // Fix the expression by assigning the formatted day value back to the 'day' variable
 
     //and hours, minutes, seconds ...
-    const hours = d.getHours();
-    const minutes = d.getMinutes();
+    let hours = d.getHours();
+    let minutes = d.getMinutes();
+    minutes = minutes < 10 ? `0${minutes}` : minutes;
+    hours = hours < 10 ? `0${hours}` : hours;
 
     return `${day}.${month}.${year} ${hours}:${minutes}`;
 }

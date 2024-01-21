@@ -66,7 +66,7 @@ class Contact:
         try:
             update_data = request.get_json()
 
-            existing_contact = db['Contact'].find_one({'company_name': update_data['company_name']})
+            existing_contact = db['Contact'].find_one({'_id': ObjectId(update_data['_id'])})
             if existing_contact:
                 db['Contact'].update_one({'_id': existing_contact['_id']}, {'$set': {
                     'company_name': update_data['company_name'],
