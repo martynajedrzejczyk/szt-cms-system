@@ -58,3 +58,19 @@ export const postEmployee = async (name, surname, city, description, visible, im
     console.log(response)
     return response.data;
 }
+
+export const postImage = async (image) => {
+    const user_id = ReactSession.get("user").id;
+    var bodyFormData = new FormData();
+    bodyFormData.append('image', image);
+    bodyFormData.append('order', '0')
+    bodyFormData.append('user_id', user_id)
+    bodyFormData.append('visible', 'true')
+    const response = await axios({
+        method: "post",
+        url: `${databaseURL}image`,
+        data: bodyFormData,
+        headers: { "Content-Type": "multipart/form-data" },
+    });
+    console.log(response)
+}
