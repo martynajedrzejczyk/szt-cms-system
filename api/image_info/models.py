@@ -1,5 +1,4 @@
 import datetime
-
 from bson import ObjectId
 from flask import jsonify, request
 from app import db
@@ -36,8 +35,7 @@ class Image_info:
                 'visible': visible})
 
             if result:
-                print(result.inserted_id)
-                return result.inserted_id
+                return result.inserted_id, 200
             else:
                 return jsonify({'status': 'error', 'message': 'Failed to add image'}), 400
         except Exception as e:

@@ -1,4 +1,5 @@
 import os
+import pathlib
 from bson import ObjectId
 from flask import request, abort, send_file
 from image_info import models
@@ -32,14 +33,16 @@ class Image:
             order = request.form.get("order")
             created_by = request.form.get("user_id")
             visible = request.form.get("visible")
-            future_file_name = models.Image_info.write(image.filename, order, created_by, visible)
-            print(ObjectId(future_file_name))
-            path = os.path.join(Image.PUBLIC_FOLDER, str(ObjectId(future_file_name)) + file_extension[1])
-            file_extension = os.path.splitext(image.filename)
-            image.filename = str(ObjectId(future_file_name)) + file_extension[1]
-            
+            future_file_name = models.Image_info.write(image.filename, order=order, created_by=created_by,
+                                                       visible=visible)
+            file_id = ObjectId(future_file_name[0])
+            print(file_id)
+            path = os.path.join(Image.PUBLIC_FOLDER, str(file_id) + pathlib.Path(image.filename).suffix)
+            image.filename = str(file_id) + pathlib.Path(image.filename).suffix
+
             image.save(path)
-            return {"response": f"File saved successfully in the {Image.PUBLIC_FOLDER} folder", "name":future_file_name}, 200
+            return {"response": f"File saved successfully in the {Image.PUBLIC_FOLDER} folder",
+                    "name": str(file_id)}, 200
 
         except Exception as e:
             return {"error": str(e)}, 400
