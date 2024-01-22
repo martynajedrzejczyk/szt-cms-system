@@ -15,8 +15,9 @@ class Image:
     @staticmethod
     def read():
         try:
-            data = request.get_json()
-            image_path = Image._get_image_path(data['name'])
+            # data = request.get_json()
+            data = request.args
+            image_path = Image._get_image_path(data.get('name'))
 
             if os.path.exists(image_path):
                 return send_file(image_path)
@@ -42,7 +43,7 @@ class Image:
 
             image.save(path)
             return {"response": f"File saved successfully in the {Image.PUBLIC_FOLDER} folder",
-                    "name": str(file_id)}, 200
+                    "name": str(file_id) + pathlib.Path(image.filename).suffix}, 200
 
         except Exception as e:
             return {"error": str(e)}, 400

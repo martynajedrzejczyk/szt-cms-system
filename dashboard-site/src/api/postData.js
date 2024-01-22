@@ -73,4 +73,5 @@ export const postImage = async (image) => {
         headers: { "Content-Type": "multipart/form-data" },
     });
     console.log(response)
+    return response
 }

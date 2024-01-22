@@ -12,6 +12,7 @@ import { putEmployee } from 'src/api/putData'
 import { deleteEmployee } from 'src/api/deleteData'
 import { ReactSession } from 'react-client-session';
 import { Navigate } from 'react-router-dom'
+import ImageView from './components/ImageView'
 
 const Employees = () => {
 
@@ -21,18 +22,21 @@ const Employees = () => {
   const [popupAddOpen, setPopupAddOpen] = React.useState(false);
   const [popupInfo, setPopupInfo] = React.useState({ name: '', surname: '', city: '', description: '', visible: true, image: '' });
   const [ifImageView, setIfImageView] = React.useState(false);
+  const [currentImage, setCurrentImage] = React.useState(null);
   const [cities, setCities] = React.useState([]);
 
   const handlePostEmployee = (name, surname, city, description, visible, image) => {
     console.log(name, surname, city, description, visible, image)
     postImage(image).then((data) => {
       console.log(data);
+      const imageName = data.data.name;
+      postEmployee(name, surname, city, description, visible, imageName).then((data) => {
+        console.log(data);
+        loadData();
+        setPopupAddOpen(false);
+      })
     })
-    // postEmployee(name, surname, city, description, visible, image).then((data) => {
-    //   console.log(data);
-    //   loadData();
-    //   setPopupAddOpen(false);
-    // })
+
   }
 
   const handleRowEdit = (id, name, surname, city, description, visible, image) => {
@@ -93,8 +97,8 @@ const Employees = () => {
               modified_at: formatDate(employee.modified_at),
               modified_by: employee.modified_by,
               modified_by_name: users.find((user) => user._id === employee.modified_by).name + ' ' + users.find((user) => user._id === employee.modified_by).surname,
-              image: employee.image,
-              // image: <CButton color="primary" onClick={() => { }}>Wyświetl</CButton>,
+              // image: employee.image,
+              image: (<CButton color="primary" onClick={() => { openImage(employee._id, employee.image, employee.name, employee.surname) }}>Wyświetl</CButton>),
               _cellProps: { id: { scope: 'row' } },
               edit: (
                 <div
@@ -145,9 +149,15 @@ const Employees = () => {
     setPopupAddOpen(true);
   }
 
+  const openImage = (employeeId, imageName, name, surname) => {
+    setIfImageView(true)
+    setCurrentImage([employeeId, imageName, name, surname])
+  }
+
   return (
     <>{ReactSession.get("loggedIn") ?
       <CCol>
+        {ifImageView ? <ImageView employee_id={currentImage[0]} image_name={currentImage[1]} closePopup={() => setIfImageView(false)} name={currentImage[2]} surname={currentImage[3]} /> : <></>}
         {popupAddOpen ? <PopupAddEmployee cities={cities} closePopup={() => setPopupAddOpen(false)} postData={handlePostEmployee} /> : <></>}
         {popupOpen ? <PopupEmployee id={popupInfo.id} name={popupInfo.name} cityId={popupInfo.city} surname={popupInfo.surname} description={popupInfo.description} visible={popupInfo.visible} image={popupInfo.image} users={users} cities={cities} closePopup={() => setPopupOpen(false)} changeData={handleChangeEmployee} /> : <></>}
         <CRow>
