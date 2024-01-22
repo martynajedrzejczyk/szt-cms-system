@@ -30,15 +30,19 @@ class Image:
     def write():
         try:
             image = request.files['image']
-            path = os.path.join(Image.PUBLIC_FOLDER, image.filename)
             order = request.form.get("order")
-            created_by = request.form.get("created_by")
+            created_by = request.form.get("user_id")
             visible = request.form.get("visible")
+            future_file_name = models.Image_info.write(image.filename, order=order, created_by=created_by,
+                                                       visible=visible)
+            file_id = ObjectId(future_file_name[0])
+            print(file_id)
+            path = os.path.join(Image.PUBLIC_FOLDER, str(file_id) + pathlib.Path(image.filename).suffix)
+            image.filename = str(file_id) + pathlib.Path(image.filename).suffix
+
             image.save(path)
-            future_file_name = models.Image_info.write(image.filename, path, order, created_by, visible)
-            print(ObjectId(future_file_name))
-            image.filename = str(ObjectId(future_file_name)) + pathlib.Path(path).suffix
-            return future_file_name
+            return {"response": f"File saved successfully in the {Image.PUBLIC_FOLDER} folder",
+                    "name": str(file_id)}, 200
 
         except Exception as e:
             return {"error": str(e)}, 400
