@@ -41,18 +41,3 @@ export const getSocialMedia = async () => {
     const response = await axiosWithCookies.get(`${databaseURL}socials`);
     return response.data;
 };
-
-export const getImage = async (name) => {
-    // const response = await axiosWithCookies.get(`${databaseURL}image`, {
-    //     data: { name },
-    //     headers: { "Content-Type": "application/json" },
-    // });
-    // const response = await axios({
-    //     method: "get",
-    //     url: `${databaseURL}image`,
-    //     data: name,
-    //     headers: { "Content-Type": "application/json" },
-    // });
-    // console.log(response)
-    // return response;
-}

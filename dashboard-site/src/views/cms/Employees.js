@@ -98,7 +98,7 @@ const Employees = () => {
               modified_by: employee.modified_by,
               modified_by_name: users.find((user) => user._id === employee.modified_by).name + ' ' + users.find((user) => user._id === employee.modified_by).surname,
               // image: employee.image,
-              image: (<CButton color="primary" onClick={() => { openImage(employee._id, employee.image, employee.name, employee.surname) }}>Wyświetl</CButton>),
+              image: (<CButton color="primary" onClick={() => { openImage(employee._id, employee.image, employee.name, employee.surname, employee.city, employee.description, employee.visible) }}>Wyświetl</CButton>),
               _cellProps: { id: { scope: 'row' } },
               edit: (
                 <div
@@ -149,15 +149,30 @@ const Employees = () => {
     setPopupAddOpen(true);
   }
 
-  const openImage = (employeeId, imageName, name, surname) => {
+  const openImage = (employeeId, imageName, name, surname, city, description, visible) => {
+    console.log(imageName)
     setIfImageView(true)
-    setCurrentImage([employeeId, imageName, name, surname])
+    setCurrentImage([employeeId, imageName, name, surname, city, description, visible])
+  }
+
+  const changeImage = (image) => {
+    console.log("zmieniam");
+    postImage(image).then((data) => {
+      console.log(data);
+      const imageName = data.data.name;
+      putEmployee(currentImage[0], currentImage[2], currentImage[3], currentImage[4], currentImage[5], currentImage[6], imageName).then((data) => {
+        loadData();
+        console.log(data)
+      })
+      setIfImageView(false);
+    })
+    setIfImageView(false);
   }
 
   return (
     <>{ReactSession.get("loggedIn") ?
       <CCol>
-        {ifImageView ? <ImageView employee_id={currentImage[0]} image_name={currentImage[1]} closePopup={() => setIfImageView(false)} name={currentImage[2]} surname={currentImage[3]} /> : <></>}
+        {ifImageView ? <ImageView save={changeImage} employee_id={currentImage[0]} image_name={currentImage[1]} closePopup={() => setIfImageView(false)} name={currentImage[2]} surname={currentImage[3]} /> : <></>}
         {popupAddOpen ? <PopupAddEmployee cities={cities} closePopup={() => setPopupAddOpen(false)} postData={handlePostEmployee} /> : <></>}
         {popupOpen ? <PopupEmployee id={popupInfo.id} name={popupInfo.name} cityId={popupInfo.city} surname={popupInfo.surname} description={popupInfo.description} visible={popupInfo.visible} image={popupInfo.image} users={users} cities={cities} closePopup={() => setPopupOpen(false)} changeData={handleChangeEmployee} /> : <></>}
         <CRow>
