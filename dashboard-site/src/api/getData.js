@@ -41,3 +41,8 @@ export const getSocialMedia = async () => {
     const response = await axiosWithCookies.get(`${databaseURL}socials`);
     return response.data;
 };
+
+export const getComponentTypes = async () => {
+    const response = await axiosWithCookies.get(`${databaseURL}component_types`);
+    return response.data;
+};

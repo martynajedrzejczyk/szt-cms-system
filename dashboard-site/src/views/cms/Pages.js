@@ -69,7 +69,7 @@ const Pages = () => {
     let navigate = useNavigate();
 
     const addPage = () => {
-        navigate('/cms/page-editor', "new");
+        navigate('/cms/page-editor', { state: { mode: 'add' } });
     }
 
     const editPage = (id) => {

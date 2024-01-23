@@ -1,0 +1,30 @@
+.component-box {
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #fefeff;
+  border-radius: 10px;
+  /* width: 80%; */
+}
+
+.component-box-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.order-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 180px;
+}
+
+.component-box-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
