@@ -21,8 +21,6 @@ const PopupAddEmployee = ({ cities, closePopup, postData }) => {
 
     const uploadImage = (e) => {
         const file = e.target.files[0];
-        // const base64 = URL.createObjectURL(file);
-        // setNewImage(base64);
         setNewImage(file);
     }
 

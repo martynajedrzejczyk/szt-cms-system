@@ -17,6 +17,7 @@ export const putCity = async (id, name, visible) => {
 
 export const putEmployee = async (id, name, surname, city, description, visible, image) => {
     const user_id = ReactSession.get("user").id;
+    console.log("A", id, name, surname, city, description, visible, image)
     const response = await axiosWithCookies.put(`${databaseURL}employee`,
         { "_id": id, name, surname, city, description, visible, image, user_id },
     );

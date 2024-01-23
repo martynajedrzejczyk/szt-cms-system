@@ -4,8 +4,9 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
-    width: 50%;
+    width: 40%;
     height: 50%;
+    min-height: 400px;
     border-color: rgb(124, 124, 124);
     border-style: solid;
     border-width: 1px;
@@ -54,16 +55,26 @@
 }
 
 .img-container {
+    margin-top: 10px;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     margin-bottom: 20px;
-    flex-direction: row;
-    height: 230px;
+    flex-direction: column;
+    height: 240px;
+    /* height: 230px; */
 }
 
 .employee-image {
-    /* width: 60%; */
-    /* max-height: 80%; */
+    height: 75%;
+    margin-bottom: 10px;
+}
+
+.popup-box {
     height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    
 }
