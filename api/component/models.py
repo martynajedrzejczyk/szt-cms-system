@@ -43,6 +43,7 @@ class Component:
                 return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
 
             result = db['Component'].insert_one({
+                'page_id': data['page_id'],
                 'order_number': data['order_number'],
                 'component_type': data['component_type'],
                 'propTextShort': data['propTextShort'],
@@ -64,7 +65,10 @@ class Component:
         try:
             update_data = request.get_json()
 
+            current_order = update_data['order_number']
+
             result = db['Component'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
+                'page_id': update_data['page_id'],
                 'order_number': update_data['order_number'],
                 'component_type': update_data['component_type'],
                 'propTextShort': update_data['propTextShort'],
@@ -72,9 +76,16 @@ class Component:
                 'propTextLong': update_data['propTextLong'],
                 'propImages': update_data['propImages'],
                 'propSuggestedImageInfo': update_data['propSuggestedImageInfo'],
-                'visible': update_data['visible']}})
+                'visible': update_data['visible']
+            }})
 
             if result.modified_count > 0:
+                db['Component'].update_many({
+                    'order_number': {'$gte': current_order},
+                    'page_id': update_data['page_id'],
+                    '_id': {'$ne': ObjectId(update_data['_id'])}
+                }, {'$inc': {'order_number': 1}})
+
                 return jsonify({'status': 'success', 'message': f'Component successfully updated.'}), 200
             else:
                 return jsonify({'status': 'error', 'message': f'Component not found'}), 400
