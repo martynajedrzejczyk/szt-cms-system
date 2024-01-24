@@ -50,7 +50,6 @@ class Component:
                 'propTextMid': data['propTextMid'],
                 'propTextLong': data['propTextLong'],
                 'propImages': data['propImages'],
-                'propSuggestedImageInfo': data['propSuggestedImageInfo'],
                 'visible': data['visible']})
 
             if result:
@@ -75,7 +74,6 @@ class Component:
                 'propTextMid': update_data['propTextMid'],
                 'propTextLong': update_data['propTextLong'],
                 'propImages': update_data['propImages'],
-                'propSuggestedImageInfo': update_data['propSuggestedImageInfo'],
                 'visible': update_data['visible']
             }})
 

@@ -44,17 +44,17 @@ const Slider = ({ text50, order_number, visible }) => {
     }
 
     const changeImageOrder = (newOrder, image) => {
-        const oldFiles = images;
-        const oldOrder = image[1];
-        const newOrderInt = parseInt(newOrder);
-        console.log("przed", images)
-        if (newOrderInt - 1 > oldFiles.length || newOrderInt < 1) {
-            alert("Nieprawidłowa wartość");
-            return;
-        }
-        const newFiles = array_move(oldFiles, oldOrder - 1, newOrderInt - 1);
-        console.log("po", newFiles)
-        setImages([...newFiles]);
+        // const oldFiles = images;
+        // const oldOrder = image[1];
+        // const newOrderInt = parseInt(newOrder);
+        // console.log("przed", images)
+        // if (newOrderInt - 1 > oldFiles.length || newOrderInt < 1) {
+        //     alert("Nieprawidłowa wartość");
+        //     return;
+        // }
+        // const newFiles = array_move(oldFiles, oldOrder - 1, newOrderInt - 1);
+        // console.log("po", newFiles)
+        // setImages([...newFiles]);
     }
 
     return (
@@ -71,18 +71,18 @@ const Slider = ({ text50, order_number, visible }) => {
                 </div>
                 <CRow className="mb-8">
                     <CRow className="mb-3 popup-line">
-                        <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
+                        <CFormLabel htmlFor="inputtext" className="col-sm-3 col-form-label">
                             Widoczność
                         </CFormLabel>
-                        <CCol sm={8}>
+                        <CCol sm={7}>
                             <CFormCheck checked={visibility} className="col-sm-4" id="inputtext" onChange={(e) => { setVisibility(e.target.checked) }} />
                         </CCol>
                     </CRow>
                     <CRow className="mb-3 popup-line">
-                        <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
+                        <CFormLabel htmlFor="inputtext" className="col-sm-3 col-form-label">
                             Tytuł (opcjonalnie)
                         </CFormLabel>
-                        <CCol sm={8}>
+                        <CCol sm={7}>
                             <CFormInput type="text" id="pageNameText" value={text} onChange={validateText50} />
                         </CCol>
                     </CRow>

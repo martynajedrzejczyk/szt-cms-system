@@ -10,6 +10,13 @@ import Header1 from './components/pageCreator/Header1';
 import Header2 from './components/pageCreator/Header2';
 import Header3 from './components/pageCreator/Header3';
 import Slider from './components/pageCreator/Slider';
+import HeroBanner from './components/pageCreator/HeroBanner';
+import Employees from './Employees';
+import EmployeesComponent from './components/pageCreator/EmployeesComponent';
+import ServicesComponent from './components/pageCreator/ServicesComponent';
+import ContactForm from './components/pageCreator/ContactForm';
+import Paragraph from './components/pageCreator/Paragraph';
+import Photo from './components/pageCreator/Photo';
 
 const PageCreator = () => {
     let location = useLocation();
@@ -117,6 +124,12 @@ const PageCreator = () => {
                 <CRow>
                     <CCol xs={1}></CCol>
                     <CCol xs={9}>
+                        <Photo />
+                        <Paragraph />
+                        <ContactForm />
+                        <ServicesComponent />
+                        <EmployeesComponent />
+                        <HeroBanner />
                         <Slider text50="XD" />
                         <Title text="XD" />
                         <Header1 text="XD" />
