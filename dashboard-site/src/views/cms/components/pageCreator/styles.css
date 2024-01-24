@@ -28,3 +28,23 @@
   justify-content: space-evenly;
   align-items: center;
 }
+
+.image-box-slider {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.image-box-slider > img {
+  width: 200px;
+}
+
+.slider-image-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-left: 10px;
+}

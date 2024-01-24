@@ -9,6 +9,7 @@ import Title from './components/pageCreator/Title';
 import Header1 from './components/pageCreator/Header1';
 import Header2 from './components/pageCreator/Header2';
 import Header3 from './components/pageCreator/Header3';
+import Slider from './components/pageCreator/Slider';
 
 const PageCreator = () => {
     let location = useLocation();
@@ -116,6 +117,7 @@ const PageCreator = () => {
                 <CRow>
                     <CCol xs={1}></CCol>
                     <CCol xs={9}>
+                        <Slider text50="XD" />
                         <Title text="XD" />
                         <Header1 text="XD" />
                         <Header2 text="XD" />
