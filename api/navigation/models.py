@@ -1,4 +1,5 @@
-from bson import ObjectId
+import json
+from bson import ObjectId, json_util
 from flask import jsonify, request, abort
 from app import db
 
@@ -14,7 +15,7 @@ class Navigation:
         try:
             navigations = list(db['Navigation'].find())
             if navigations:
-                return jsonify(convert_object_ids(navigations)), 200
+                return json.loads(json_util.dumps(navigations)), 200
             else:
                 return jsonify({'status': 'error', 'message': 'Navigations not found'}), 400
         except Exception as e:

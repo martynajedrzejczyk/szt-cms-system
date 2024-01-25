@@ -54,7 +54,8 @@ class Page:
                 'navigation_order': data['navigation_order']})
 
             if result:
-                return jsonify({'status': 'success', 'message': f'{data["name"]} successfully inserted.'}), 200
+                print(str(result.inserted_id))
+                return jsonify({'status': 'success', 'message': f'{data["name"]} successfully inserted.', "page_id": str(result.inserted_id)}), 200
             else:
                 return jsonify({'status': 'error', 'message': 'Failed to add page'}), 400
         except Exception as e:
