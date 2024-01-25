@@ -2,10 +2,11 @@ import React from "react"
 import "./styles.css"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton } = require("@coreui/react")
 
-const Title = ({ data }) => {
+const Title = ({ data, saveComponent }) => {
     const [text, setText] = React.useState(data.text50);
     const [order, setOrder] = React.useState(data.order_number);
     const [visibility, setVisibility] = React.useState(data.visible);
+    const [exportData, setExportData] = React.useState({ _id: data._id, page_id: data.page_id, component_type: "Title", text50: "", order_number: "", visible: "" });
     const validateText50 = (e) => {
         if (e.target.value.length <= 50) {
             setText(e.target.value)
@@ -13,6 +14,13 @@ const Title = ({ data }) => {
             alert("Maksymalna długość tekstu wynosi 50 znaków")
         }
     }
+
+    const DoSaveComponent = () => {
+        setExportData({ page_id: data.page_id, component_type: "Title", text50: text, order_number: order, visible: visibility })
+        console.log(exportData)
+        saveComponent(exportData);
+    }
+
     return (
         <CRow className="mb-8">
             <div className="component-box">
@@ -45,7 +53,7 @@ const Title = ({ data }) => {
                 </CRow>
                 <div className="component-box-footer">
                     <CButton color="danger">Usuń komponent</CButton>
-                    <CButton color="primary">Zapisz zmiany</CButton>
+                    <CButton color="primary" onClick={DoSaveComponent}>Zapisz zmiany</CButton>
                 </div>
             </div>
         </CRow>

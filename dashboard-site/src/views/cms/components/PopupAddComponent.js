@@ -6,12 +6,12 @@ import { getComponentTypes } from 'src/api/getData';
 const PopupAddComponent = ({ closePopup, addComponent }) => {
 
     const [componentTypes, setComponentTypes] = React.useState([]);
-    const [type, setType] = React.useState(null);
+    const [type, setType] = React.useState("");
 
     useEffect(() => {
         getComponentTypes().then((response) => {
             setComponentTypes(response);
-            console.log(response)
+            setType(response[0]._id)
         })
     }, []);
 

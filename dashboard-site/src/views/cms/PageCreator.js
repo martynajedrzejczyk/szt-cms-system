@@ -4,7 +4,7 @@ import { ReactSession } from 'react-client-session';
 import { Navigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 import "./PageCreator.css"
-import { getComponentTypes } from 'src/api/getData';
+import { getComponentTypes, getNavigations } from 'src/api/getData';
 import Title from './components/pageCreator/Title';
 import Header1 from './components/pageCreator/Header1';
 import Header2 from './components/pageCreator/Header2';
@@ -18,6 +18,7 @@ import ContactForm from './components/pageCreator/ContactForm';
 import Paragraph from './components/pageCreator/Paragraph';
 import Photo from './components/pageCreator/Photo';
 import PopupAddComponent from './components/PopupAddComponent';
+import { postPage } from 'src/api/postData';
 
 const PageCreator = () => {
     let location = useLocation();
@@ -29,11 +30,12 @@ const PageCreator = () => {
     const [name, setName] = React.useState("");
     const [endpoint, setEndpoint] = React.useState("");
     const [visible, setVisible] = React.useState(false);
-    const [navigation_id, setNavigation_id] = React.useState(null);
-    const [navigation_order, setNavigation_order] = React.useState(null);
+    const [navigation_id, setNavigation_id] = React.useState("");
+    const [navigation_order, setNavigation_order] = React.useState("null");
     const [components, setComponents] = React.useState([]);
 
     const [componentTypes, setComponentTypes] = React.useState([]);
+    const [navigations, setNavigations] = React.useState([]);
     const [ifAddComponent, setIfAddComponent] = React.useState(false);
 
     React.useEffect(() => {
@@ -49,37 +51,69 @@ const PageCreator = () => {
             setComponentTypes(response);
             console.log(response)
         })
+        getNavigations().then((response) => {
+            console.log(response)
+            setNavigations(response);
+        })
     }, []);
 
+    const addPage = () => {
+        console.log(name, endpoint, visible, navigation_id, navigation_order)
+        if (name === "" || endpoint === "" || navigation_id === "null" || navigation_order === "null") {
+            alert("Wypełnij wszystkie pola")
+            return;
+        }
+        const dump_navigation_id = "65b2a33c0a71b6e0ecdb6584";
+        const dump_navigation_order = 0;
+        postPage(name, endpoint, visible, dump_navigation_id, dump_navigation_order).then((response) => {
+            console.log(response)
+            if (response.status === "success") {
+                alert("Dodano stronę")
+                setMode("edit")
+            } else {
+                alert("Błąd podczas dodawania strony")
+            }
+        })
+    }
+
     const addComponent = () => {
+        if (mode === "add") {
+            alert("Przed dodaniem komponentu zapisz stronę")
+            return;
+        }
         setIfAddComponent(true);
+        console.log(components)
     }
 
     const addNewComponent = (type) => {
+        console.log("dodaje komponent")
+        const newPageIg = mode === "add" ? null : pageId;
         const newComponent = {
-            type: type,
+            type: componentTypes.find((componentType) => componentType._id === type).name,
             data: {
-                text50: "",
-                text200: "",
-                text1500: "",
+                propTextShort: "",
+                propTextMid: "",
+                propTextLong: "",
                 images: [],
                 visible: true,
-                order_number: components.length + 1
+                order_number: components.length + 1,
+                page_id: newPageIg,
+                component_type: type,
             }
         }
-        setComponents([...components, newComponent]);
+        console.log(newComponent)
+        const oldComponents = components;
+        setComponents([...oldComponents, newComponent]);
+        setIfAddComponent(false);
     }
 
-    const navOptions = [
-        {
-            value: '1',
-            label: 'Menu główne XD todo'
-        },
-        {
-            value: '2',
-            label: 'Menu stopki'
-        }
-    ]
+    const saveComponent = (exportedData) => {
+        console.log(exportedData)
+    }
+
+    const navOptions = navigations.map((navigation) => {
+        return { value: navigation._id, label: navigation.name }
+    })
 
     return (
         <>{ReactSession.get("loggedIn") ?
@@ -90,7 +124,7 @@ const PageCreator = () => {
                         {mode === "add" ? <h1>Nowa strona</h1> : <h1>Edytuj stronę</h1>}
                     </CCol>
                     <CCol xs={2}>
-                        {mode === "add" ? <CButton color="primary">Dodaj stronę</CButton> : <CButton color="primary">Zapisz</CButton>}
+                        {mode === "add" ? <CButton color="primary" onClick={addPage} >Dodaj stronę</CButton> : <CButton color="primary">Zapisz</CButton>}
                     </CCol>
                 </CRow>
                 <h2>Właściwości</h2>
@@ -123,7 +157,7 @@ const PageCreator = () => {
                         Navigation Id
                     </CFormLabel>
                     <CCol sm={8}>
-                        <CFormSelect id="inputtext" value={navigation_id} onChange={(e) => setNavigation_id(e.target.value)} options={navOptions} />
+                        <CFormSelect id="inputwtext" value={navigation_id} onChange={(e) => setNavigation_id(e.target.value)} options={navOptions} />
                     </CCol>
                 </CRow>
                 <CRow className="mb-3 popup-line">
@@ -131,66 +165,50 @@ const PageCreator = () => {
                         Navigation order
                     </CFormLabel>
                     <CCol sm={8}>
-                        <CFormSelect id="inputtext" value={navigation_order} onChange={(e) => setNavigation_order(e.target.value)} options={navOptions} />
+                        {/* <CFormSelect id="inputtext" value={navigation_order} onChange={(e) => setNavigation_order(e.target.value)} options={navOptions} /> */}
                     </CCol>
                 </CRow>
-                <CRow className="mb-3">
-                    <CCol xs={8}>
-                        <h2>Komponenty</h2>
-                    </CCol>
-                    <CCol xs={4}>
-                        <CButton color="primary" onClick={addComponent}>Dodaj komponent</CButton>
-                    </CCol>
-                </CRow>
-                {/* Początek komponentów */}
-                <CRow>
-                    <CCol xs={1}></CCol>
-                    <CCol xs={9}>
-                        {components.map((component) => {
-                            if (component.type === "title") {
-                                return <Title key={component.data.order_number} data={component.data} />
-                            } else if (component.type === "header1") {
-                                return <Header1 key={component.data.order_number} data={component.data} />
-                            } else if (component.type === "header2") {
-                                return <Header2 key={component.data.order_number} data={component.data} />
-                            } else if (component.type === "header3") {
-                                return <Header3 key={component.data.order_number} data={component.data} />
-                            } else if (component.type === "slider") {
-                                return <Slider key={component.data.order_number} data={component.data} />
-                            } else if (component.type === "heroBanner") {
-                                return <HeroBanner key={component.data.order_number} data={component.data} />
-                            } else if (component.type === "employees") {
-                                return <EmployeesComponent key={component.data.order_number} data={component.data} />
-                            } else if (component.type === "services") {
-                                return <ServicesComponent key={component.data.order_number} data={component.data} />
-                            } else if (component.type === "contactForm") {
-                                return <ContactForm key={component.data.order_number} data={component.data} />
-                            } else if (component.type === "paragraph") {
-                                return <Paragraph key={component.data.order_number} data={component.data} />
-                            } else if (component.type === "photo") {
-                                return <Photo key={component.data.order_number} data={component.data} />
-                            } else {
-                                return <></>
-                            }
-                        })}
-                        {/* <Photo />
-                        <Paragraph />
-                        <ContactForm />
-                        <ServicesComponent />
-                        <EmployeesComponent />
-                        <HeroBanner />
-                        <Slider text50="XD" />
-                        <Title text="XD" />
-                        <Header1 text="XD" />
-                        <Header2 text="XD" />
-                        <Header3 text="XD" />
-                        <Title text="XD" />
-                        <Title text="XD" />
-                        <Title text="XD" />
-                        <Title text="XD" /> */}
-                    </CCol>
-                </CRow>
-                {/* Koniec komponentów */}
+                {mode === "edit" ? <>
+                    <CRow className="mb-3">
+                        <CCol xs={8}>
+                            <h2>Komponenty</h2>
+                        </CCol>
+                        <CCol xs={4}>
+                            <CButton color="primary" onClick={addComponent}>Dodaj komponent</CButton>
+                        </CCol>
+                    </CRow>
+                    <CRow>
+                        <CCol xs={9}>
+                            {components.map((component, index) => {
+                                console.log(component)
+                                if (component.type === "Tytuł") {
+                                    return <Title key={index} data={component.data} saveComponent={saveComponent} />
+                                } else if (component.type === "Nagłówek 1") {
+                                    return <Header1 key={index} data={component.data} />
+                                } else if (component.type === "Nagłówek 2") {
+                                    return <Header2 key={index} data={component.data} />
+                                } else if (component.type === "Nagłówek 3") {
+                                    return <Header3 key={index} data={component.data} />
+                                } else if (component.type === "Slider") {
+                                    return <Slider key={index} data={component.data} />
+                                } else if (component.type === "HeroBanner") {
+                                    return <HeroBanner key={index} data={component.data} />
+                                } else if (component.type === "Pracownicy") {
+                                    return <EmployeesComponent key={index} data={component.data} />
+                                } else if (component.type === "Usługi") {
+                                    return <ServicesComponent key={index} data={component.data} />
+                                } else if (component.type === "Formularz kontaktowy") {
+                                    return <ContactForm key={index} data={component.data} />
+                                } else if (component.type === "Akapit") {
+                                    return <Paragraph key={index} data={component.data} />
+                                } else if (component.type === "Zdjęcie") {
+                                    return <Photo key={index} data={component.data} />
+                                } else {
+                                    return <></>
+                                }
+                            })}
+                        </CCol>
+                    </CRow></> : <></>}
                 <CListGroup>
 
                 </CListGroup>
