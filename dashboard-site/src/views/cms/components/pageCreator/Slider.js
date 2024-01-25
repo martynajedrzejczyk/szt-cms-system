@@ -3,12 +3,19 @@ import "./styles.css"
 import { array_move } from "src/utils/arrayOperations"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton } = require("@coreui/react")
 
-const Slider = ({ text50, order_number, visible }) => {
-    const [text, setText] = React.useState(text50);
-    const [order, setOrder] = React.useState(order_number);
-    const [visibility, setVisibility] = React.useState(visible);
-    const [choosenImage, setChoosenImage] = React.useState([]); // [image, order
+const Slider = ({ data }) => {
+    const [text, setText] = React.useState(data.text50);
+    const [order, setOrder] = React.useState(data.order_number);
+    const [visibility, setVisibility] = React.useState(data.visible);
+    const [choosenImage, setChoosenImage] = React.useState([]);
     const [images, setImages] = React.useState([]);
+
+    React.useEffect(() => {
+        if (data.images) {
+            setImages(data.images);
+        }
+    }, [data.images])
+
     const validateText50 = (e) => {
         if (e.target.value.length <= 50) {
             setText(e.target.value)

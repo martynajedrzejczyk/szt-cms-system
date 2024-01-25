@@ -2,11 +2,11 @@ import React from "react"
 import "./styles.css"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton, CFormTextarea } = require("@coreui/react")
 
-const HeroBanner = ({ text50, text200, order_number, visible }) => {
-    const [text, setText] = React.useState(text50);
-    const [description, setDescription] = React.useState(text200);
-    const [order, setOrder] = React.useState(order_number);
-    const [visibility, setVisibility] = React.useState(visible);
+const HeroBanner = ({ data }) => {
+    const [text, setText] = React.useState(data.text50);
+    const [description, setDescription] = React.useState(data.text200);
+    const [order, setOrder] = React.useState(data.order_number);
+    const [visibility, setVisibility] = React.useState(data.visible);
     const [image, setImage] = React.useState(null);
     const [imgBuffor, setImgBuffor] = React.useState(null);
 

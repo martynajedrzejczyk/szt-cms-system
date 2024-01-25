@@ -46,3 +46,8 @@ export const getComponentTypes = async () => {
     const response = await axiosWithCookies.get(`${databaseURL}component_types`);
     return response.data;
 };
+
+export const getComponents = async () => {
+    const response = await axiosWithCookies.get(`${databaseURL}component_types`);
+    return response.data;
+}

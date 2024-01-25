@@ -2,9 +2,9 @@ import React from "react"
 import "./styles.css"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton } = require("@coreui/react")
 
-const ServicesComponent = ({ text50, order_number, visible }) => {
-    const [order, setOrder] = React.useState(order_number);
-    const [visibility, setVisibility] = React.useState(visible);
+const ServicesComponent = ({ data }) => {
+    const [order, setOrder] = React.useState(data.order_number);
+    const [visibility, setVisibility] = React.useState(data.visible);
 
     return (
         <CRow className="mb-8">

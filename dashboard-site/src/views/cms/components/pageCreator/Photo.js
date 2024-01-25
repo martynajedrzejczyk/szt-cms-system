@@ -1,13 +1,19 @@
-import React from "react"
+import React, { useEffect } from "react"
 import "./styles.css"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton, CFormTextarea } = require("@coreui/react")
 
-const Photo = ({ text50, img, order_number, visible }) => {
-    const [text, setText] = React.useState(text50);
-    const [order, setOrder] = React.useState(order_number);
-    const [visibility, setVisibility] = React.useState(visible);
-    const [image, setImage] = React.useState(img);
+const Photo = ({ data }) => {
+    const [text, setText] = React.useState(data.text50);
+    const [order, setOrder] = React.useState(data.order_number);
+    const [visibility, setVisibility] = React.useState(data.visible);
+    const [image, setImage] = React.useState();
     const [imgBuffor, setImgBuffor] = React.useState(null);
+
+    useEffect(() => {
+        if (data.image) {
+            setImage(data.image[0]);
+        }
+    }, [data.image])
 
     const validateText200 = (e) => {
         if (e.target.value.length <= 200) {

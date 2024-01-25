@@ -17,6 +17,7 @@ import ServicesComponent from './components/pageCreator/ServicesComponent';
 import ContactForm from './components/pageCreator/ContactForm';
 import Paragraph from './components/pageCreator/Paragraph';
 import Photo from './components/pageCreator/Photo';
+import PopupAddComponent from './components/PopupAddComponent';
 
 const PageCreator = () => {
     let location = useLocation();
@@ -33,6 +34,7 @@ const PageCreator = () => {
     const [components, setComponents] = React.useState([]);
 
     const [componentTypes, setComponentTypes] = React.useState([]);
+    const [ifAddComponent, setIfAddComponent] = React.useState(false);
 
     React.useEffect(() => {
         if (locationState["mode"] === "add") {
@@ -49,6 +51,25 @@ const PageCreator = () => {
         })
     }, []);
 
+    const addComponent = () => {
+        setIfAddComponent(true);
+    }
+
+    const addNewComponent = (type) => {
+        const newComponent = {
+            type: type,
+            data: {
+                text50: "",
+                text200: "",
+                text1500: "",
+                images: [],
+                visible: true,
+                order_number: components.length + 1
+            }
+        }
+        setComponents([...components, newComponent]);
+    }
+
     const navOptions = [
         {
             value: '1',
@@ -63,12 +84,13 @@ const PageCreator = () => {
     return (
         <>{ReactSession.get("loggedIn") ?
             <CCol>
+                {ifAddComponent ? <PopupAddComponent addComponent={addNewComponent} closePopup={() => setIfAddComponent(false)} /> : <></>}
                 <CRow>
                     <CCol xs={8}>
                         {mode === "add" ? <h1>Nowa strona</h1> : <h1>Edytuj stronę</h1>}
                     </CCol>
                     <CCol xs={2}>
-                        <CButton color="primary">Zapisz</CButton>
+                        {mode === "add" ? <CButton color="primary">Dodaj stronę</CButton> : <CButton color="primary">Zapisz</CButton>}
                     </CCol>
                 </CRow>
                 <h2>Właściwości</h2>
@@ -117,14 +139,41 @@ const PageCreator = () => {
                         <h2>Komponenty</h2>
                     </CCol>
                     <CCol xs={4}>
-                        <CButton color="primary">Dodaj komponent</CButton>
+                        <CButton color="primary" onClick={addComponent}>Dodaj komponent</CButton>
                     </CCol>
                 </CRow>
                 {/* Początek komponentów */}
                 <CRow>
                     <CCol xs={1}></CCol>
                     <CCol xs={9}>
-                        <Photo />
+                        {components.map((component) => {
+                            if (component.type === "title") {
+                                return <Title key={component.data.order_number} data={component.data} />
+                            } else if (component.type === "header1") {
+                                return <Header1 key={component.data.order_number} data={component.data} />
+                            } else if (component.type === "header2") {
+                                return <Header2 key={component.data.order_number} data={component.data} />
+                            } else if (component.type === "header3") {
+                                return <Header3 key={component.data.order_number} data={component.data} />
+                            } else if (component.type === "slider") {
+                                return <Slider key={component.data.order_number} data={component.data} />
+                            } else if (component.type === "heroBanner") {
+                                return <HeroBanner key={component.data.order_number} data={component.data} />
+                            } else if (component.type === "employees") {
+                                return <EmployeesComponent key={component.data.order_number} data={component.data} />
+                            } else if (component.type === "services") {
+                                return <ServicesComponent key={component.data.order_number} data={component.data} />
+                            } else if (component.type === "contactForm") {
+                                return <ContactForm key={component.data.order_number} data={component.data} />
+                            } else if (component.type === "paragraph") {
+                                return <Paragraph key={component.data.order_number} data={component.data} />
+                            } else if (component.type === "photo") {
+                                return <Photo key={component.data.order_number} data={component.data} />
+                            } else {
+                                return <></>
+                            }
+                        })}
+                        {/* <Photo />
                         <Paragraph />
                         <ContactForm />
                         <ServicesComponent />
@@ -138,24 +187,12 @@ const PageCreator = () => {
                         <Title text="XD" />
                         <Title text="XD" />
                         <Title text="XD" />
-                        <Title text="XD" />
+                        <Title text="XD" /> */}
                     </CCol>
                 </CRow>
                 {/* Koniec komponentów */}
                 <CListGroup>
-                    {components.map((component) => {
-                        return (
-                            <CListGroup.Item key={component._id}>
-                                <CRow>
-                                    <CCol xs={8}>
-                                        <CFormSelect id="inputtext" value={component.type} onChange={(e) => setNavigation_id(e.target.value)} options={componentTypes} />
-                                    </CCol>
-                                    <CCol xs={4}>
-                                        <CButton color="primary">Usuń</CButton>
-                                    </CCol>
-                                </CRow>
-                            </CListGroup.Item>)
-                    })}
+
                 </CListGroup>
             </CCol>
             : <Navigate to="/login" />}</>
