@@ -25,8 +25,8 @@ class Page:
     @staticmethod
     def read():
         try:
-            data = request.get_json()
-            page = db['Page'].find_one({'_id': ObjectId(data['_id'])})
+            data = request.args
+            page = db['Page'].find_one({'_id': ObjectId(data.get('page_id'))})
             if page:
                 return jsonify(convert_object_ids([page])), 200
             else:
@@ -70,7 +70,7 @@ class Page:
             update_data = request.get_json()
 
             result = db['Page'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
-                'name': ['name'],
+                'name': update_data['name'],
                 'endpoint': update_data['endpoint'],
                 'modified_at': datetime.datetime.today(),
                 'modified_by': update_data['user_id'],
