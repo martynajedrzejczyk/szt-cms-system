@@ -18,7 +18,7 @@ import ContactForm from './components/pageCreator/ContactForm';
 import Paragraph from './components/pageCreator/Paragraph';
 import Photo from './components/pageCreator/Photo';
 import PopupAddComponent from './components/PopupAddComponent';
-import { postPage } from 'src/api/postData';
+import { postComponent, postPage } from 'src/api/postData';
 import { getPage } from 'src/api/getData';
 import { putPage } from 'src/api/putData';
 
@@ -106,6 +106,7 @@ const PageCreator = () => {
         })
     }
 
+    // otwiera popupa do dodawania komponentu
     const addComponent = () => {
         if (mode === "add") {
             alert("Przed dodaniem komponentu zapisz stronę")
@@ -115,6 +116,7 @@ const PageCreator = () => {
         console.log(components)
     }
 
+    // dodaje komponent do strony
     const addNewComponent = (type) => {
         console.log("dodaje komponent")
         const newPageIg = mode === "add" ? null : currPageId;
@@ -123,7 +125,7 @@ const PageCreator = () => {
             propTextShort: "",
             propTextMid: "",
             propTextLong: "",
-            images: [],
+            propImages: [],
             visible: true,
             order_number: components.length + 1,
             page_id: newPageIg,
@@ -131,6 +133,8 @@ const PageCreator = () => {
             component_type_name: newtype,
         }
         console.log(newComponent)
+        postComponent(newComponent.page_id, newComponent.propTextShort, newComponent.propTextMid, newComponent.propTextLong, newComponent.propImages, newComponent.visible, newComponent.order_number, newComponent.component_type)
+        // (page_id, propTextShort, propTextMid, propTextLong, propImages, visible, order_number, component_type)
         // const oldComponents = components;
         // setComponents([...oldComponents, newComponent]); //todo - wyslac i po wyslaniu odebrac
 

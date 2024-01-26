@@ -40,7 +40,7 @@ class Component:
             if ('order_number' not in data or 'component_type' not in data or 'propTextShort' not in data
                     or 'propTextMid' not in data
                     or 'propTextLong' not in data or 'propImages'
-                    not in data or 'propSuggestedImageInfo' not in data or 'visible' not in data):
+                    not in data or 'visible' not in data):
                 return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
 
             result = db['Component'].insert_one({
