@@ -36,6 +36,7 @@ class Component:
     def write():
         try:
             data = request.get_json()
+            current_order = data['order_number']
             if ('order_number' not in data or 'component_type' not in data or 'propTextShort' not in data
                     or 'propTextMid' not in data
                     or 'propTextLong' not in data or 'propImages'
@@ -52,8 +53,12 @@ class Component:
                 'propImages': data['propImages'],
                 'visible': data['visible']})
 
-            if result:
-                return jsonify({'status': 'success', 'message': f'Component successfully inserted.'}), 200
+            if result.modified_count > 0:
+                db['Component'].update_many({
+                    'order_number': {'$gte': current_order},
+                    'page_id': data['page_id'],
+                    '_id': {'$ne': ObjectId(result.inserted_id)}
+                }, {'$inc': {'order_number': 1}})
             else:
                 return jsonify({'status': 'error', 'message': 'Failed to add component'}), 400
         except Exception as e:
@@ -94,9 +99,14 @@ class Component:
     def delete():
         try:
             data = request.get_json()
+            current_order = request.form.get('order_number')
             result = db['Component'].delete_one({'_id': ObjectId(data['_id'])})
 
             if result.deleted_count > 0:
+                db['Component'].update_many({
+                    'order_number': {'$gte': current_order},
+                    'page_id': data['page_id'],},
+                    {'$inc': {'order_number': -1}})
                 return jsonify({'status': 'success', 'message': f'Component {data["_id"]} deleted successfully'}), 200
             else:
                 return jsonify({'status': 'error', 'message': f'Component {data["_id"]} not found'}), 400
