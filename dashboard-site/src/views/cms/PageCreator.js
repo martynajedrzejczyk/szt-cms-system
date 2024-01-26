@@ -19,32 +19,49 @@ import Paragraph from './components/pageCreator/Paragraph';
 import Photo from './components/pageCreator/Photo';
 import PopupAddComponent from './components/PopupAddComponent';
 import { postPage } from 'src/api/postData';
+import { getPage } from 'src/api/getData';
+import { putPage } from 'src/api/putData';
 
 const PageCreator = () => {
     let location = useLocation();
     const locationState = useLocation().state;
     const locationPath = useLocation().pathname;
-    const pageId = locationPath.split("/")[3]; //todo do sprawdzenia czy dobre pokazuje id strony
     const [mode, setMode] = React.useState(null);
 
     const [name, setName] = React.useState("");
     const [endpoint, setEndpoint] = React.useState("");
     const [visible, setVisible] = React.useState(false);
-    const [navigation_id, setNavigation_id] = React.useState("");
+    const [navigation_id, setNavigation_id] = React.useState("null");
     const [navigation_order, setNavigation_order] = React.useState("null");
     const [components, setComponents] = React.useState([]);
 
     const [componentTypes, setComponentTypes] = React.useState([]);
     const [navigations, setNavigations] = React.useState([]);
+    const [navOptions, setNavOptions] = React.useState([]);
     const [ifAddComponent, setIfAddComponent] = React.useState(false);
+
+    const [currPageId, setCurrPageId] = React.useState(locationPath.split("/")[2]);
 
     React.useEffect(() => {
         if (locationState["mode"] === "add") {
             setMode("add")
         } else {
             setMode("edit")
+            console.log(currPageId)
+            loadData();
         }
-    }, [locationState]);
+    }, [locationState, currPageId]);
+
+    const loadData = () => {
+        getPage(currPageId).then((response) => {
+            console.log(response[0])
+            setName(response[0].name)
+            setEndpoint(response[0].endpoint)
+            setVisible(response[0].visible)
+            setNavigation_id(response[0].navigation_id)
+            setNavigation_order(response[0].navigation_order)
+        })
+    }
 
     React.useEffect(() => {
         getComponentTypes().then((response) => {
@@ -52,24 +69,37 @@ const PageCreator = () => {
             console.log(response)
         })
         getNavigations().then((response) => {
-            console.log(response)
             setNavigations(response);
+            console.log(response)
+            // setNavigation_id(response[0]._id)
+            setNavOptions(response.map((navigation) => {
+                return {
+                    value: navigation._id.$oid,
+                    label: navigation.name
+                }
+            }))
+            console.log(response.map((navigation) => {
+                return {
+                    value: navigation._id.$oid,
+                    label: navigation.name
+                }
+            }))
         })
     }, []);
 
     const addPage = () => {
         console.log(name, endpoint, visible, navigation_id, navigation_order)
-        if (name === "" || endpoint === "" || navigation_id === "null" || navigation_order === "null") {
+        if (name === "" || endpoint === "" || navigation_id === "null") {
             alert("Wypełnij wszystkie pola")
             return;
         }
-        const dump_navigation_id = "65b2a33c0a71b6e0ecdb6584";
-        const dump_navigation_order = 0;
-        postPage(name, endpoint, visible, dump_navigation_id, dump_navigation_order).then((response) => {
+
+        postPage(name, endpoint, visible, navigation_id, 0).then((response) => {
             console.log(response)
             if (response.status === "success") {
                 alert("Dodano stronę")
                 setMode("edit")
+                setCurrPageId(response.data.page_id)
             } else {
                 alert("Błąd podczas dodawania strony")
             }
@@ -87,23 +117,23 @@ const PageCreator = () => {
 
     const addNewComponent = (type) => {
         console.log("dodaje komponent")
-        const newPageIg = mode === "add" ? null : pageId;
+        const newPageIg = mode === "add" ? null : currPageId;
+        const newtype = componentTypes.find((componentType) => componentType._id === type).name;
         const newComponent = {
-            type: componentTypes.find((componentType) => componentType._id === type).name,
-            data: {
-                propTextShort: "",
-                propTextMid: "",
-                propTextLong: "",
-                images: [],
-                visible: true,
-                order_number: components.length + 1,
-                page_id: newPageIg,
-                component_type: type,
-            }
+            propTextShort: "",
+            propTextMid: "",
+            propTextLong: "",
+            images: [],
+            visible: true,
+            order_number: components.length + 1,
+            page_id: newPageIg,
+            component_type: type,
+            component_type_name: newtype,
         }
         console.log(newComponent)
-        const oldComponents = components;
-        setComponents([...oldComponents, newComponent]);
+        // const oldComponents = components;
+        // setComponents([...oldComponents, newComponent]); //todo - wyslac i po wyslaniu odebrac
+
         setIfAddComponent(false);
     }
 
@@ -111,20 +141,30 @@ const PageCreator = () => {
         console.log(exportedData)
     }
 
-    const navOptions = navigations.map((navigation) => {
-        return { value: navigation._id, label: navigation.name }
-    })
+    const saveAttributes = () => {
+        console.log(currPageId, name, endpoint, visible, navigation_id, navigation_order)
+        // putPage(currPageId, name, endpoint, visible, navigation_id, navigation_order)
+        putPage(currPageId, name, endpoint, visible, navigation_id, navigation_order).then((response) => {
+            console.log(response)
+            if (response.status === "success") {
+                alert("Zapisano właściwości strony")
+                loadData();
+            } else {
+                alert("Błąd podczas zapisywania właściwości strony")
+            }
+        })
+    }
 
     return (
         <>{ReactSession.get("loggedIn") ?
             <CCol>
                 {ifAddComponent ? <PopupAddComponent addComponent={addNewComponent} closePopup={() => setIfAddComponent(false)} /> : <></>}
                 <CRow>
-                    <CCol xs={8}>
+                    <CCol xs={7}>
                         {mode === "add" ? <h1>Nowa strona</h1> : <h1>Edytuj stronę</h1>}
                     </CCol>
-                    <CCol xs={2}>
-                        {mode === "add" ? <CButton color="primary" onClick={addPage} >Dodaj stronę</CButton> : <CButton color="primary">Zapisz</CButton>}
+                    <CCol xs={3}>
+                        {mode === "add" ? <CButton color="primary" onClick={addPage} >Dodaj stronę</CButton> : <CButton onClick={saveAttributes} color="primary">Zapisz właściwości</CButton>}
                     </CCol>
                 </CRow>
                 <h2>Właściwości</h2>
@@ -154,20 +194,22 @@ const PageCreator = () => {
                 </CRow>
                 <CRow className="mb-3 popup-line">
                     <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
-                        Navigation Id
+                        Sekcja w nawigacji
                     </CFormLabel>
                     <CCol sm={8}>
                         <CFormSelect id="inputwtext" value={navigation_id} onChange={(e) => setNavigation_id(e.target.value)} options={navOptions} />
                     </CCol>
                 </CRow>
-                <CRow className="mb-3 popup-line">
+                {/* nie ma ponizej bo wywalamy na ostatnie miejsce w sekcji navigation strone  */}
+                {/* <CRow className="mb-3 popup-line">
                     <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
                         Navigation order
                     </CFormLabel>
                     <CCol sm={8}>
-                        {/* <CFormSelect id="inputtext" value={navigation_order} onChange={(e) => setNavigation_order(e.target.value)} options={navOptions} /> */}
+                        <CFormSelect id="inputtext" value={navigation_order} onChange={(e) => setNavigation_order(e.target.value)} options={navOptions} />
                     </CCol>
-                </CRow>
+                </CRow> */}
+                {/* <CFormSelect id="inputwtext" value={navigation_id} onChange={(e) => setNavigation_id(e.target.value)} options={navOptions} />   </CRow> */}
                 {mode === "edit" ? <>
                     <CRow className="mb-3">
                         <CCol xs={8}>
