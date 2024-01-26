@@ -53,12 +53,13 @@ class Component:
                 'propImages': data['propImages'],
                 'visible': data['visible']})
 
-            if result.modified_count > 0:
+            if result:
                 db['Component'].update_many({
                     'order_number': {'$gte': current_order},
                     'page_id': data['page_id'],
                     '_id': {'$ne': ObjectId(result.inserted_id)}
                 }, {'$inc': {'order_number': 1}})
+                return jsonify({'status': 'success', 'message': f'Component successfully inserted.'}), 200
             else:
                 return jsonify({'status': 'error', 'message': 'Failed to add component'}), 400
         except Exception as e:
