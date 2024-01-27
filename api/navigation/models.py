@@ -1,12 +1,16 @@
 import json
+
 from bson import ObjectId, json_util
-from flask import jsonify, request, abort
+from flask import jsonify, request
+
 from app import db
+
 
 def convert_object_ids(navigations):
     for navigation in navigations:
         navigation['_id'] = str(navigation['_id'])
     return navigations
+
 
 class Navigation:
 
@@ -37,6 +41,7 @@ class Navigation:
     def write():
         try:
             data = request.get_json()
+            current_order = data['order']
             if 'name' not in data or 'visible' not in data or 'order' not in data:
                 return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
             new_navigation = {
@@ -46,9 +51,16 @@ class Navigation:
             }
             if 'parent_id' in data and data['parent_id']:
                 new_navigation['parent_id'] = ObjectId(data['parent_id'])
+            else:
+                new_navigation['parent_id'] = 'root'
             result = db['Navigation'].insert_one(new_navigation)
 
             if result:
+                db['Navigation'].update_many({
+                    'order': {'$gte': current_order},
+                    'parent_id': data['parent_id'],
+                    '_id': {'$ne': ObjectId(result.inserted_id)}
+                }, {'$inc': {'order_number': 1}})
                 return jsonify({'status': 'success', 'message': f'{data["name"]} successfully inserted.'}), 200
             else:
                 return jsonify({'status': 'error', 'message': 'Failed to add navigation'}), 400
@@ -59,6 +71,7 @@ class Navigation:
     def update():
         try:
             update_data = request.get_json()
+            current_order = update_data['order_number']
             if 'name' not in update_data or 'visible' not in update_data or 'order' not in update_data:
                 return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
             updated_navigation = {
@@ -68,10 +81,17 @@ class Navigation:
             }
             if 'parent_id' in update_data and update_data['parent_id']:
                 updated_navigation['parent_id'] = ObjectId(update_data['parent_id'])
+            else:
+                updated_navigation['parent_id'] = 'root'
 
             result = db['Navigation'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': updated_navigation})
 
             if result.modified_count > 0:
+                db['Navigation'].update_many({
+                    'order': {'$gte': current_order},
+                    'parent_id': update_data['parent_id'],
+                    '_id': {'$ne': ObjectId(update_data['_id'])}
+                }, {'$inc': {'order': 1}})
                 return jsonify({'status': 'success', 'message': f'{update_data["name"]} successfully updated.'}), 200
             else:
                 return jsonify({'status': 'error', 'message': f'Navigation {update_data["name"]} not found'}), 400
@@ -82,9 +102,14 @@ class Navigation:
     def delete():
         try:
             data = request.get_json()
+            current_order = request.form.get('order_number')
             result = db['Navigation'].delete_one({'_id': ObjectId(data['_id'])})
 
             if result.deleted_count > 0:
+                db['Navigation'].update_many({
+                    'order': {'$gte': current_order},
+                    'parent_id': data['parent_id'], },
+                    {'$inc': {'order_number': -1}})
                 return jsonify({'status': 'success', 'message': f'Navigation {data["_id"]} deleted successfully'}), 200
             else:
                 return jsonify({'status': 'error', 'message': f'Navigation {data["_id"]} not found'}), 400
