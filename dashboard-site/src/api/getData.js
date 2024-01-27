@@ -1,10 +1,8 @@
-import { useState } from 'react';
 import axios from 'axios';
-import { useEffect } from 'react';
 import { databaseURL } from './url';
 
 const axiosWithCookies = axios.create({
-    withCredentials: true
+    // withCredentials: true
 });
 
 export const getCities = async () => {

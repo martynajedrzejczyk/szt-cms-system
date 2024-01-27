@@ -40,13 +40,30 @@ import Download from "pages/Presentation/sections/Download";
 import BuiltByDevelopers from "pages/Presentation/components/BuiltByDevelopers";
 
 // Routes
-import routes from "routes";
+import { getNavigations } from "api/getData";
+import { getPages } from "api/getData";
+// import { formatRoutes } from "utils/formatRoutes";
+import { createRoutes } from "utils/formatRoutes";
+import { useEffect, useState } from "react";
 import footerRoutes from "footer.routes";
 
 // Images
 import bgImage from "assets/images/background.webp";
 
 function Presentation() {
+  const [routes, setRoutes] = useState([]);
+  // Setting page scroll to 0 when changing the route
+  useEffect(() => {
+    document.documentElement.scrollTop = 0;
+    document.scrollingElement.scrollTop = 0;
+    getNavigations().then((navs) => {
+      setRoutes(navs);
+      getPages().then((pags) => {
+        setRoutes(createRoutes(navs, pags));
+      })
+    }
+    );
+  }, []);
   return (
     <>
       <DefaultNavbar

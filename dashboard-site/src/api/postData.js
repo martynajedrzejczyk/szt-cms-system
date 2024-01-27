@@ -3,7 +3,7 @@ import { databaseURL } from './url';
 import { ReactSession } from 'react-client-session'
 
 const axiosWithCookies = axios.create({
-    withCredentials: true
+    // withCredentials: true
 });
 
 

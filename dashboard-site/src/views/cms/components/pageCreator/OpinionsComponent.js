@@ -2,12 +2,15 @@ import React from "react"
 import "./styles.css"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton } = require("@coreui/react")
 
-const OpinionsComponent = ({ data, saveComponent }) => {
+const OpinionsComponent = ({ data, saveComponent, deleteComponent }) => {
     const [order, setOrder] = React.useState(data.order_number);
     const [visibility, setVisibility] = React.useState(data.visible);
 
     const DoSaveComponent = () => {
         saveComponent({ _id: data._id, page_id: data.page_id, component_type: data.component_type, propTextShort: "", order_number: order, visible: visibility, propTextMid: "", propTextLong: "", propImages: "" });
+    }
+    const DoDeleteComponent = () => {
+        deleteComponent(data._id, data.order_number, data.page_id)
     }
     return (
         <CRow className="mb-8">
@@ -32,7 +35,7 @@ const OpinionsComponent = ({ data, saveComponent }) => {
                     </CRow>
                 </CRow>
                 <div className="component-box-footer">
-                    <CButton color="danger">Usuń komponent</CButton>
+                    <CButton color="danger" onClick={DoDeleteComponent}>Usuń komponent</CButton>
                     <CButton color="primary" onClick={DoSaveComponent}>Zapisz zmiany</CButton>
                 </div>
             </div>

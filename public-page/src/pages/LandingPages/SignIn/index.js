@@ -40,12 +40,30 @@ import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 import SimpleFooter from "examples/Footers/SimpleFooter";
 
 // Material Kit 2 React page layout routes
-import routes from "routes";
+// import routes from "routes";
+import { getNavigations } from "api/getData";
+import { getPages } from "api/getData";
+// import { formatRoutes } from "utils/formatRoutes";
+import { createRoutes } from "utils/formatRoutes";
+import { useEffect } from "react";
 
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
 function SignInBasic() {
+  const [routes, setRoutes] = useState([]);
+  // Setting page scroll to 0 when changing the route
+  useEffect(() => {
+    document.documentElement.scrollTop = 0;
+    document.scrollingElement.scrollTop = 0;
+    getNavigations().then((navs) => {
+      setRoutes(navs);
+      getPages().then((pags) => {
+        setRoutes(createRoutes(navs, pags));
+      })
+    }
+    );
+  }, []);
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);

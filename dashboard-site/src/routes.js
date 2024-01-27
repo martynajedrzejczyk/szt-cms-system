@@ -72,7 +72,7 @@ const routes = [
   { path: '/cms/navigation', name: 'Navigation', element: Navigation },
   { path: '/cms/pages', name: 'Pages', element: Pages },
   { path: '/pageEditor/:id', name: 'Pages', element: PageCreator },
-  { path: '/pageEditor/', name: 'Pages', element: PageCreator },
+  { path: '/cms/page-editor/', name: 'PageEditor', element: PageCreator },
   { path: '/base', name: 'Base', element: Cards, exact: true },
   { path: '/base/accordion', name: 'Accordion', element: Accordion },
   { path: '/base/breadcrumbs', name: 'Breadcrumbs', element: Breadcrumbs },

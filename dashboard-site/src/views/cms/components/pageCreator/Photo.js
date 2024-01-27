@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 import "./styles.css"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton, CFormTextarea } = require("@coreui/react")
 
-const Photo = ({ data, saveComponent }) => {
+const Photo = ({ data, saveComponent, deleteComponent }) => {
     const [text, setText] = React.useState(data.propTextShort);
     const [order, setOrder] = React.useState(data.order_number);
     const [visibility, setVisibility] = React.useState(data.visible);
@@ -17,6 +17,9 @@ const Photo = ({ data, saveComponent }) => {
         } else {
             alert("Maksymalna długość tekstu wynosi 200 znaków")
         }
+    }
+    const DoDeleteComponent = () => {
+        deleteComponent(data._id, data.order_number, data.page_id)
     }
 
     const DoSaveComponent = () => {
@@ -80,7 +83,7 @@ const Photo = ({ data, saveComponent }) => {
                     </div> : <></>}
                 </CRow>
                 <div className="component-box-footer">
-                    <CButton color="danger">Usuń komponent</CButton>
+                    <CButton color="danger" onClick={DoDeleteComponent}>Usuń komponent</CButton>
                     <CButton color="primary" onClick={DoSaveComponent}>Zapisz zmiany</CButton>
                 </div>
             </div>

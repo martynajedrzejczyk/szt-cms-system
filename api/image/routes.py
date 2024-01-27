@@ -1,3 +1,4 @@
+from flask_cors import cross_origin
 from app import app
 from image.models import Image
 
@@ -6,6 +7,9 @@ from image.models import Image
 def read_image():
     return Image().read()
 
+# @app.route('/image', methods=['GET'])
+# def read_image():
+#     return Image().read()
 
 @app.route('/image', methods=['POST'])
 def write_image():
