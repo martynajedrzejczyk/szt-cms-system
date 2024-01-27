@@ -106,5 +106,5 @@ export const postComponent = async (page_id, propTextShort, propTextMid, propTex
         user_id
     });
     console.log(response)
-    // return response.data;
+    return response.data;
 }

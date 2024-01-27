@@ -31,6 +31,24 @@ class Component:
                 return jsonify({'status': 'error', 'message': 'Component not found'}), 400
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 400
+        
+    @staticmethod
+    def readByPageId():
+        try:
+            data = request.args
+
+            if data.get('page_id') is not None:
+                components = db['Component'].find({'page_id': data.get('page_id')})
+                components_list = list(components)
+
+                if components_list:
+                    return jsonify(convert_object_ids(components_list)), 200
+                else:
+                    return jsonify({'status': 'empty', 'message': 'No components found for the given page_id'}), 200
+            else:
+                return jsonify({'status': 'error', 'message': 'page_id not provided in the request'}), 400
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)}), 400
 
     @staticmethod
     def write():
@@ -75,7 +93,6 @@ class Component:
             result = db['Component'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
                 'page_id': update_data['page_id'],
                 'order_number': update_data['order_number'],
-                'component_type': update_data['component_type'],
                 'propTextShort': update_data['propTextShort'],
                 'propTextMid': update_data['propTextMid'],
                 'propTextLong': update_data['propTextLong'],

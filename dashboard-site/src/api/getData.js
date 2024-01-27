@@ -67,3 +67,9 @@ export const getPage = async (page_id) => {
     console.log(response)
     return response.data;
 }
+
+export const getComponentsByPageId = async (page_id) => {
+    const response = await axiosWithCookies.get(`${databaseURL}componentsOfPage?page_id=${page_id}`);
+    console.log(response)
+    return response.data;
+}

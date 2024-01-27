@@ -1,10 +1,9 @@
 import React from "react"
 import "./styles.css"
-import { array_move } from "src/utils/arrayOperations"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton } = require("@coreui/react")
 
-const Slider = ({ data }) => {
-    const [text, setText] = React.useState(data.text50);
+const Slider = ({ data, saveComponent }) => {
+    const [text, setText] = React.useState(data.propTextShort);
     const [order, setOrder] = React.useState(data.order_number);
     const [visibility, setVisibility] = React.useState(data.visible);
     const [choosenImage, setChoosenImage] = React.useState([]);
@@ -62,6 +61,9 @@ const Slider = ({ data }) => {
         // const newFiles = array_move(oldFiles, oldOrder - 1, newOrderInt - 1);
         // console.log("po", newFiles)
         // setImages([...newFiles]);
+    }
+    const DoSaveComponent = () => {
+        saveComponent({ _id: data._id, page_id: data.page_id, component_type: data.component_type, propTextShort: text, order_number: order, visible: visibility, propTextMid: "", propTextLong: "", propImages: images });
     }
 
     return (
@@ -125,7 +127,7 @@ const Slider = ({ data }) => {
                 </CRow>
                 <div className="component-box-footer">
                     <CButton color="danger">Usuń komponent</CButton>
-                    <CButton color="primary">Zapisz zmiany</CButton>
+                    <CButton color="primary" onClick={DoSaveComponent}>Zapisz zmiany</CButton>
                 </div>
             </div>
         </CRow>

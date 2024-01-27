@@ -11,6 +11,10 @@ def read_all_components():
 def read_component():
     return Component().read()
 
+@app.route('/componentsOfPage', methods=['GET'])
+def read_components_of_page():
+    return Component().readByPageId()
+
 
 @app.route('/component', methods=['POST'])
 def write_component():
