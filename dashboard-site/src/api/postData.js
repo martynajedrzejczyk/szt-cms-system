@@ -76,15 +76,15 @@ export const postImage = async (image) => {
     return response
 }
 
-export const postPage = async (name, endpoint, visible, navigation_id, navigation_order) => {
+export const postPage = async (name, endpoint, visible, navigation_id) => {
     const user_id = ReactSession.get("user").id;
-    console.log(name, endpoint, visible, navigation_id, navigation_order, user_id)
+    console.log(name, endpoint, visible, navigation_id, user_id)
     const response = await axiosWithCookies.post(`${databaseURL}page`, {
         name,
         endpoint,
         visible,
         navigation_id,
-        navigation_order,
+        navigation_order: 0,
         user_id
     });
     console.log(response)
