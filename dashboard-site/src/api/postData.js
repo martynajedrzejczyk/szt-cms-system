@@ -90,3 +90,21 @@ export const postPage = async (name, endpoint, visible, navigation_id) => {
     console.log(response)
     return response.data;
 }
+
+export const postComponent = async (page_id, propTextShort, propTextMid, propTextLong, propImages, visible, order_number, component_type) => {
+    const user_id = ReactSession.get("user").id;
+    console.log(page_id, propTextShort, propTextMid, propTextLong, propImages, visible, order_number, component_type, user_id)
+    const response = await axiosWithCookies.post(`${databaseURL}component`, {
+        page_id,
+        propTextShort,
+        propTextMid,
+        propTextLong,
+        propImages,
+        visible,
+        order_number,
+        component_type,
+        user_id
+    });
+    console.log(response)
+    return response.data;
+}

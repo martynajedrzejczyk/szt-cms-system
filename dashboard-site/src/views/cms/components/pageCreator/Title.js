@@ -3,10 +3,9 @@ import "./styles.css"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton } = require("@coreui/react")
 
 const Title = ({ data, saveComponent }) => {
-    const [text, setText] = React.useState(data.text50);
+    const [text, setText] = React.useState(data.propTextShort);
     const [order, setOrder] = React.useState(data.order_number);
     const [visibility, setVisibility] = React.useState(data.visible);
-    const [exportData, setExportData] = React.useState({ _id: data._id, page_id: data.page_id, component_type: "Title", text50: "", order_number: "", visible: "" });
     const validateText50 = (e) => {
         if (e.target.value.length <= 50) {
             setText(e.target.value)
@@ -16,10 +15,18 @@ const Title = ({ data, saveComponent }) => {
     }
 
     const DoSaveComponent = () => {
-        setExportData({ page_id: data.page_id, component_type: "Title", text50: text, order_number: order, visible: visibility })
-        console.log(exportData)
-        saveComponent(exportData);
+        console.log({ page_id: data.page_id, component_type: "Title", text50: text, order_number: order, visible: visibility })
+        saveComponent({ _id: data._id, page_id: data.page_id, component_type: data.component_type, propTextShort: text, order_number: order, visible: visibility, propTextMid: "", propTextLong: "", propImages: "" });
     }
+    // _id: update_data['_id'],
+    // 'page_id': update_data['page_id'],
+    // 'order_number': update_data['order_number'],
+    // 'component_type': update_data['component_type'],
+    // 'propTextShort': update_data['propTextShort'],
+    // 'propTextMid': update_data['propTextMid'],
+    // 'propTextLong': update_data['propTextLong'],
+    // 'propImages': update_data['propImages'],
+    // 'visible': update_data['visible']
 
     return (
         <CRow className="mb-8">

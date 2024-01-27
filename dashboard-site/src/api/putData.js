@@ -71,3 +71,14 @@ export const putPage = async (id, name, endpoint, visible, navigation_id, naviga
     console.log(response)
     return response.data;
 }
+
+export const putComponent = async (id, page_id, propTextShort, propTextMid, propTextLong, propImages, order_number, visible) => {
+    const user_id = ReactSession.get("user").id;
+    console.log(id, page_id, propTextShort, propTextMid, propTextLong, propImages, order_number, visible)
+    order_number = parseInt(order_number)
+    const response = await axiosWithCookies.put(`${databaseURL}component`,
+        { "_id": id, page_id, propTextShort, propTextMid, propTextLong, propImages, order_number, visible, user_id },
+    );
+    console.log(response)
+    return response.data;
+}

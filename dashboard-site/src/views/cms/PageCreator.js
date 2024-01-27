@@ -4,7 +4,7 @@ import { ReactSession } from 'react-client-session';
 import { Navigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 import "./PageCreator.css"
-import { getComponentTypes, getNavigations } from 'src/api/getData';
+import { getComponentTypes, getComponentsByPageId, getNavigations } from 'src/api/getData';
 import Title from './components/pageCreator/Title';
 import Header1 from './components/pageCreator/Header1';
 import Header2 from './components/pageCreator/Header2';
@@ -18,9 +18,11 @@ import ContactForm from './components/pageCreator/ContactForm';
 import Paragraph from './components/pageCreator/Paragraph';
 import Photo from './components/pageCreator/Photo';
 import PopupAddComponent from './components/PopupAddComponent';
-import { postPage } from 'src/api/postData';
+import { postComponent, postImage, postPage } from 'src/api/postData';
 import { getPage } from 'src/api/getData';
-import { putPage } from 'src/api/putData';
+import { putComponent, putPage } from 'src/api/putData';
+import OpinionsComponent from './components/pageCreator/OpinionsComponent';
+import OpinionsForm from './components/pageCreator/OpinionsForm';
 
 const PageCreator = () => {
     let location = useLocation();
@@ -60,6 +62,15 @@ const PageCreator = () => {
             setVisible(response[0].visible)
             setNavigation_id(response[0].navigation_id)
             setNavigation_order(response[0].navigation_order)
+        })
+        getComponentsByPageId(currPageId).then((response) => {
+            console.log("komponenty tej strony", response)
+            if (response?.status === "empty") {
+                setComponents([])
+                return;
+            }
+            response.sort((a, b) => a.order_number - b.order_number)
+            setComponents(response)
         })
     }
 
@@ -106,6 +117,7 @@ const PageCreator = () => {
         })
     }
 
+    // otwiera popupa do dodawania komponentu
     const addComponent = () => {
         if (mode === "add") {
             alert("Przed dodaniem komponentu zapisz stronę")
@@ -115,6 +127,7 @@ const PageCreator = () => {
         console.log(components)
     }
 
+    // dodaje komponent do strony
     const addNewComponent = (type) => {
         console.log("dodaje komponent")
         const newPageIg = mode === "add" ? null : currPageId;
@@ -123,7 +136,7 @@ const PageCreator = () => {
             propTextShort: "",
             propTextMid: "",
             propTextLong: "",
-            images: [],
+            propImages: [],
             visible: true,
             order_number: components.length + 1,
             page_id: newPageIg,
@@ -131,14 +144,53 @@ const PageCreator = () => {
             component_type_name: newtype,
         }
         console.log(newComponent)
-        // const oldComponents = components;
-        // setComponents([...oldComponents, newComponent]); //todo - wyslac i po wyslaniu odebrac
-
+        postComponent(newComponent.page_id, newComponent.propTextShort, newComponent.propTextMid, newComponent.propTextLong, newComponent.propImages, newComponent.visible, newComponent.order_number, newComponent.component_type).then((response) => {
+            console.log(response)
+            if (response.status === "success") {
+                loadData();
+            } else {
+                alert("Błąd podczas dodawania komponentu")
+            }
+        })
         setIfAddComponent(false);
     }
 
+    // zapisuje komponent po zmianie - put
     const saveComponent = (exportedData) => {
         console.log(exportedData)
+        putComponent(exportedData._id, exportedData.page_id, exportedData.propTextShort, exportedData.propTextMid, exportedData.propTextLong, exportedData.propImages, exportedData.order_number, exportedData.visible).then((response) => {
+            console.log(response)
+            if (response.status === "success") {
+                alert("Zapisano komponent")
+                loadData();
+            } else {
+                alert("Błąd podczas zapisywania komponentu")
+            }
+        })
+    }
+
+    const saveComponentWithImages = (exportedData) => {
+        console.log(exportedData)
+        const componentType = componentTypes.find((componentType) => componentType._id === exportedData.component_type)?.name;
+        console.log(componentType)
+        if (componentType === "Zdjęcie") {
+            postImage(exportedData.propImages).then((response) => {
+                console.log(response)
+                if (response.status === 200) {
+                    putComponent(exportedData._id, exportedData.page_id, exportedData.propTextShort, exportedData.propTextMid, exportedData.propTextLong, response.data.name, exportedData.order_number, exportedData.visible).then((response) => {
+                        console.log(response)
+                        if (response.status === "success") {
+                            alert("Zapisano komponent")
+                            loadData();
+                        } else {
+                            alert("Błąd podczas zapisywania komponentu")
+                        }
+                    })
+                } else {
+                    alert("Błąd podczas zapisywania zdjęcia")
+                }
+            })
+        }
     }
 
     const saveAttributes = () => {
@@ -222,29 +274,34 @@ const PageCreator = () => {
                     <CRow>
                         <CCol xs={9}>
                             {components.map((component, index) => {
-                                console.log(component)
-                                if (component.type === "Tytuł") {
-                                    return <Title key={index} data={component.data} saveComponent={saveComponent} />
-                                } else if (component.type === "Nagłówek 1") {
-                                    return <Header1 key={index} data={component.data} />
-                                } else if (component.type === "Nagłówek 2") {
-                                    return <Header2 key={index} data={component.data} />
-                                } else if (component.type === "Nagłówek 3") {
-                                    return <Header3 key={index} data={component.data} />
-                                } else if (component.type === "Slider") {
-                                    return <Slider key={index} data={component.data} />
-                                } else if (component.type === "HeroBanner") {
-                                    return <HeroBanner key={index} data={component.data} />
-                                } else if (component.type === "Pracownicy") {
-                                    return <EmployeesComponent key={index} data={component.data} />
-                                } else if (component.type === "Usługi") {
-                                    return <ServicesComponent key={index} data={component.data} />
-                                } else if (component.type === "Formularz kontaktowy") {
-                                    return <ContactForm key={index} data={component.data} />
-                                } else if (component.type === "Akapit") {
-                                    return <Paragraph key={index} data={component.data} />
-                                } else if (component.type === "Zdjęcie") {
-                                    return <Photo key={index} data={component.data} />
+                                // console.log(component)
+                                if (component.component_type === componentTypes.find((componentType) => componentType.name === "Tytuł")?._id) {
+                                    // if (component.type === "Tytuł") {
+                                    return <Title key={index} data={component} saveComponent={saveComponent} />
+                                } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Nagłówek 1")?._id) {
+                                    return <Header1 key={index} data={component} saveComponent={saveComponent} />
+                                } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Nagłówek 2")?._id) {
+                                    return <Header2 key={index} data={component} saveComponent={saveComponent} />
+                                } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Nagłówek 3")?._id) {
+                                    return <Header3 key={index} data={component} saveComponent={saveComponent} />
+                                } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Slider")?._id) {
+                                    return <Slider key={index} data={component} saveComponent={saveComponentWithImages} />
+                                } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Hero banner")?._id) {
+                                    return <HeroBanner key={index} data={component} saveComponent={saveComponentWithImages} />
+                                } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Pracownicy")?._id) {
+                                    return <EmployeesComponent key={index} data={component} saveComponent={saveComponent} />
+                                } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Usługi")?._id) {
+                                    return <ServicesComponent key={index} data={component} saveComponent={saveComponent} />
+                                } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Formularz kontaktowy")?._id) {
+                                    return <ContactForm key={index} data={component} saveComponent={saveComponent} />
+                                } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Akapit")?._id) {
+                                    return <Paragraph key={index} data={component} saveComponent={saveComponent} />
+                                } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Zdjęcie")?._id) {
+                                    return <Photo key={index} data={component} saveComponent={saveComponentWithImages} />
+                                } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Opinie")?._id) {
+                                    return <OpinionsComponent key={index} data={component} saveComponent={saveComponent} />
+                                } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Opinie - formularz")?._id) {
+                                    return <OpinionsForm key={index} data={component} saveComponent={saveComponent} />
                                 } else {
                                     return <></>
                                 }
