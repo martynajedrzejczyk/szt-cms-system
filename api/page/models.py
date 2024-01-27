@@ -38,6 +38,7 @@ class Page:
     def write():
         try:
             data = request.get_json()
+            current_order = data['order_number']
             if 'name' not in data or 'endpoint' not in data or 'visible' not in data or 'navigation_id' not in data:
                 return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
 
@@ -56,7 +57,6 @@ class Page:
                 'navigation_order': navigation_order})
 
             if result:
-                print(str(result.inserted_id))
                 return jsonify({'status': 'success', 'message': f'{data["name"]} successfully inserted.',
                                 "page_id": str(result.inserted_id)}), 200
             else:
@@ -69,6 +69,8 @@ class Page:
         try:
             update_data = request.get_json()
 
+            current_order = update_data['navigation_order']
+
             result = db['Page'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
                 'name': ['name'],
                 'endpoint': update_data['endpoint'],
@@ -79,7 +81,13 @@ class Page:
                 'navigation_order': update_data['navigation_order']}})
 
             if result.modified_count > 0:
+                db['Page'].update_many({
+                    'navigation_order': {'$gte': current_order},
+                    'navigation_id': update_data['navigation_id'],
+                    '_id': {'$ne': ObjectId(update_data['_id'])}
+                }, {'$inc': {'navigation_order': 1}})
                 return jsonify({'status': 'success', 'message': f'{update_data["name"]} successfully updated.'}), 200
+
             else:
                 return jsonify({'status': 'error', 'message': f'Page {update_data["name"]} not found'}), 400
         except Exception as e:
@@ -89,9 +97,14 @@ class Page:
     def delete():
         try:
             data = request.get_json()
+            current_order = request.form.get('navigation_order')
             result = db['Page'].delete_one({'_id': ObjectId(data['_id'])})
 
             if result.deleted_count > 0:
+                db['Page'].update_many({
+                    'navigation_order': {'$gte': current_order},
+                    'navigation_id': data['navigation_id'],
+                }, {'$inc': {'navigation_order': -1}})
                 return jsonify({'status': 'success', 'message': f'Page {data["_id"]} deleted successfully'}), 200
             else:
                 return jsonify({'status': 'error', 'message': f'Page {data["_id"]} not found'}), 400
