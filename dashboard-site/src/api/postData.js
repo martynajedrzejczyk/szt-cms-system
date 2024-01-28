@@ -108,3 +108,14 @@ export const postComponent = async (page_id, propTextShort, propTextMid, propTex
     console.log(response)
     return response.data;
 }
+
+export const postNavigation = async (name, order, visible, parent_id) => {
+    const response = await axiosWithCookies.post(`${databaseURL}navigation`, {
+        name,
+        order,
+        visible,
+        parent_id
+    });
+    console.log(response)
+    return response.data;
+}

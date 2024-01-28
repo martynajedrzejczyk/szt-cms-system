@@ -82,3 +82,11 @@ export const putComponent = async (id, page_id, propTextShort, propTextMid, prop
     console.log(response)
     return response.data;
 }
+
+export const putNavigation = async (id, name, order, visible, parent_id) => {
+    const response = await axiosWithCookies.put(`${databaseURL}city`, {
+        "_id": id, name, order, visible, parent_id
+    });
+    console.log(response)
+    return response.data;
+}
