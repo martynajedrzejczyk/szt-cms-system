@@ -9,11 +9,13 @@ const PopupNavigation = ({ name, visible, parentId, closePopup, changeData, navi
     const [newOrder, setNewOrder] = React.useState("1");
     const [newParentId, setNewParentId] = React.useState(navigationToChoose.find((navigation) => navigation.id === parentId)._id);
 
-    const options = navigationToChoose.map((navigation) => {
-        return {
+    const options = [
+        { value: null, label: "Brak" }, // Adjust the label accordingly
+        ...navigationToChoose.map((navigation) => ({
             value: navigation._id,
             label: navigation.name
-        }})
+        }))
+    ];
 
     return (
         <div className="popup-container">
@@ -34,7 +36,7 @@ const PopupNavigation = ({ name, visible, parentId, closePopup, changeData, navi
                     Kolejność
                 </CFormLabel>
                 <CCol sm={8}>
-                    <CFormInput type="text" id="inputtext" value={newOrder} onChange={(e) => setNewOrder(e.target.value)} />
+                    <CFormInput type="number" id="inputtext" value={newOrder} onChange={(e) => setNewOrder(e.target.value)} />
                 </CCol>
             </CRow>
             <CRow className="mb-3 popup-line">

@@ -1,18 +1,21 @@
-import { CButton, CCol, CFormCheck, CFormInput, CFormLabel, CRow, CFormSelect } from "@coreui/react";
-import "./Popup.css"
 import React from 'react';
+import { CButton, CCol, CFormCheck, CFormInput, CFormLabel, CRow, CFormSelect } from "@coreui/react";
+import "./Popup.css";
 
 const PopupAddNavigation = ({ name, visible, parentId, closePopup, postData, navigationToChoose }) => {
     const [newName, setNewName] = React.useState("");
     const [newVisibility, setNewVisibility] = React.useState(true);
     const [newOrder, setNewOrder] = React.useState("1");
-    const [newParentId, setNewParentId] = React.useState(null);
-    
-    const options = navigationToChoose.map((navigation) => {
-        return {
+    const [newParentId, setNewParentId] = React.useState(""); // Initial state with empty value
+
+    const options = [
+        { value: null, label: "Brak" }, // Adjust the label accordingly
+        ...navigationToChoose.map((navigation) => ({
             value: navigation._id,
             label: navigation.name
-        }})
+        }))
+    ];
+
     return (
         <div className="popup-container">
             <div className="popup-header">
@@ -32,7 +35,7 @@ const PopupAddNavigation = ({ name, visible, parentId, closePopup, postData, nav
                     Kolejność
                 </CFormLabel>
                 <CCol sm={8}>
-                    <CFormInput type="text" id="inputtext" value={newOrder} onChange={(e) => setNewOrder(e.target.value)} />
+                    <CFormInput type="number" id="inputtext" value={newOrder} onChange={(e) => setNewOrder(e.target.value)} />
                 </CCol>
             </CRow>
             <CRow className="mb-3 popup-line">
@@ -40,7 +43,12 @@ const PopupAddNavigation = ({ name, visible, parentId, closePopup, postData, nav
                     Sekcja nadrzędna
                 </CFormLabel>
                 <CCol sm={8}>
-                    <CFormSelect id="inputtext" value={newParentId} onChange={(e) => setNewParentId(e.target.value)} options={options} />
+                    <CFormSelect
+                        id="inputtext"
+                        value={newParentId}
+                        onChange={(e) => setNewParentId(e.target.value)}
+                        options={options}
+                    />
                 </CCol>
             </CRow>
             <CRow className="mb-3 popup-line">
@@ -52,12 +60,11 @@ const PopupAddNavigation = ({ name, visible, parentId, closePopup, postData, nav
                 </CCol>
             </CRow>
             <CRow className="mb-3 popup-buttons">
-                <CButton color="primary" className="col-sm-2" onClick={() => postData(newName,newOrder, newParentId, newVisibility)}>Dodaj</CButton>
+                <CButton color="primary" className="col-sm-2" onClick={() => postData(newName, newOrder, newParentId, newVisibility)}>Dodaj</CButton>
                 <CButton color="primary" className="col-sm-2" onClick={closePopup}>Anuluj</CButton>
             </CRow>
-
         </div>
-    )
+    );
 };
 
 export default PopupAddNavigation;

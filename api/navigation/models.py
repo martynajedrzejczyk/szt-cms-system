@@ -102,16 +102,27 @@ class Navigation:
     def delete():
         try:
             data = request.get_json()
-            current_order = request.form.get('order')
-            result = db['Navigation'].delete_one({'_id': ObjectId(data['_id'])})
+            deleted_navigation_id = data['_id']
+            parent_id = data.get('parent_id')
+            current_order = data['order']
+
+            # Find and delete the navigation
+            result = db['Navigation'].delete_one({'_id': ObjectId(deleted_navigation_id)})
 
             if result.deleted_count > 0:
                 db['Navigation'].update_many({
                     'order': {'$gte': current_order},
-                    'parent_id': data['parent_id'], },
-                    {'$inc': {'order': -1}})
-                return jsonify({'status': 'success', 'message': f'Navigation {data["_id"]} deleted successfully'}), 200
+                    'parent_id': parent_id,
+                }, {'$inc': {'order': -1}})
+
+                db['Navigation'].update_many(
+                    {'parent_id': ObjectId(deleted_navigation_id)},
+                    {'$set': {'parent_id': ObjectId(parent_id)}})
+
+                return jsonify(
+                    {'status': 'success', 'message': f'Navigation {deleted_navigation_id} deleted successfully'}), 200
             else:
-                return jsonify({'status': 'error', 'message': f'Navigation {data["_id"]} not found'}), 400
+                return jsonify({'status': 'error', 'message': f'Navigation {deleted_navigation_id} not found'}), 400
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 400
+
