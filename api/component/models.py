@@ -56,20 +56,12 @@ class Component:
     def write():
         try:
             data = request.get_json()
+            current_order = data['order_number']
             if ('order_number' not in data or 'component_type' not in data or 'propTextShort' not in data
                     or 'propTextMid' not in data
                     or 'propTextLong' not in data or 'propImages'
                     not in data or 'visible' not in data):
                 return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
-
-            existing_component = db['Component'].find_one(
-                {'page_id': data['page_id'], 'order_number': data['order_number']})
-            if existing_component:
-                # If a component already exists at the specified order_number, shift the others
-                db['Component'].update_many({
-                    'order_number': {'$gte': data['order_number']},
-                    'page_id': data['page_id']
-                }, {'$inc': {'order_number': 1}})
 
             result = db['Component'].insert_one({
                 'page_id': data['page_id'],
@@ -82,6 +74,11 @@ class Component:
                 'visible': data['visible']})
 
             if result:
+                db['Component'].update_many({
+                    'order_number': {'$gte': current_order},
+                    'page_id': data['page_id'],
+                    '_id': {'$ne': ObjectId(result.inserted_id)}
+                }, {'$inc': {'order_number': 1}})
                 return jsonify({'status': 'success', 'message': f'Component successfully inserted.'}), 200
             else:
                 return jsonify({'status': 'error', 'message': 'Failed to add component'}), 400
@@ -93,16 +90,8 @@ class Component:
         try:
             update_data = request.get_json()
 
-            existing_component = db['Component'].find_one({'page_id': update_data['page_id'],
-                                                           'order_number': update_data['order_number']})
-            if existing_component:
-                # If a component already exists at the specified order_number, shift the others
-                db['Component'].update_many({
-                    'order_number': {'$gte': update_data['order_number']},
-                    'page_id': update_data['page_id'],
-                    '_id': {'$ne': ObjectId(update_data['_id'])}
-                }, {'$inc': {'order_number': 1}})
-
+            current_order = db['Component'].find_one({'_id': ObjectId(update_data['_id'])})['order_number']
+            new_order = update_data['order_number']
             result = db['Component'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
                 'page_id': update_data['page_id'],
                 'order_number': update_data['order_number'],
@@ -114,6 +103,19 @@ class Component:
             }})
 
             if result.modified_count > 0:
+                if new_order < current_order:
+                    db['Component'].update_many({
+                        'order_number': {'$gte': new_order, '$lt': current_order},
+                        'page_id': update_data['page_id'],
+                        '_id': {'$ne': ObjectId(update_data['_id'])}
+                    }, {'$inc': {'order_number': 1}})
+                elif new_order > current_order:
+                    db['Component'].update_many({
+                        'order_number': {'$gt': current_order, '$lte': new_order},
+                        'page_id': update_data['page_id'],
+                        '_id': {'$ne': ObjectId(update_data['_id'])}
+                    }, {'$inc': {'order_number': -1}})
+
                 return jsonify({'status': 'success', 'message': f'Component successfully updated.'}), 200
             else:
                 return jsonify({'status': 'error', 'message': f'Component not found'}), 400
@@ -124,21 +126,14 @@ class Component:
     def delete():
         try:
             data = request.get_json()
-
-            component_to_delete = db['Component'].find_one({'_id': ObjectId(data['_id'])})
-            if not component_to_delete:
-                return jsonify({'status': 'error', 'message': f'Component {data["_id"]} not found'}), 400
-
-            current_order = component_to_delete['order_number']
-
+            current_order = request.form.get('order_number')
             result = db['Component'].delete_one({'_id': ObjectId(data['_id'])})
 
             if result.deleted_count > 0:
-                # Shift the components below the deleted one by decrementing their order_number
                 db['Component'].update_many({
-                    'order_number': {'$gt': current_order},
-                    'page_id': component_to_delete['page_id']
-                }, {'$inc': {'order_number': -1}})
+                    'order_number': {'$gte': current_order},
+                    'page_id': data['page_id'], },
+                    {'$inc': {'order_number': -1}})
                 return jsonify({'status': 'success', 'message': f'Component {data["_id"]} deleted successfully'}), 200
             else:
                 return jsonify({'status': 'error', 'message': f'Component {data["_id"]} not found'}), 400
