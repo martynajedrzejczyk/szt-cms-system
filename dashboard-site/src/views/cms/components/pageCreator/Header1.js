@@ -2,8 +2,8 @@ import React from "react"
 import "./styles.css"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton } = require("@coreui/react")
 
-const Header1 = ({ data }) => {
-    const [text, setText] = React.useState(data.text50);
+const Header1 = ({ data, saveComponent, deleteComponent }) => {
+    const [text, setText] = React.useState(data.propTextShort);
     const [order, setOrder] = React.useState(data.order_number);
     const [visibility, setVisibility] = React.useState(data.visible);
     const validateText50 = (e) => {
@@ -12,6 +12,13 @@ const Header1 = ({ data }) => {
         } else {
             alert("Maksymalna długość tekstu wynosi 50 znaków")
         }
+    }
+    const DoSaveComponent = () => {
+        console.log({ page_id: data.page_id, component_type: "Title", text50: text, order_number: order, visible: visibility })
+        saveComponent({ _id: data._id, page_id: data.page_id, component_type: data.component_type, propTextShort: text, order_number: order, visible: visibility, propTextMid: "", propTextLong: "", propImages: "" });
+    }
+    const DoDeleteComponent = () => {
+        deleteComponent(data._id, data.order_number, data.page_id)
     }
     return (
         <CRow className="mb-8">
@@ -44,8 +51,8 @@ const Header1 = ({ data }) => {
                     </CRow>
                 </CRow>
                 <div className="component-box-footer">
-                    <CButton color="danger">Usuń komponent</CButton>
-                    <CButton color="primary">Zapisz zmiany</CButton>
+                    <CButton color="danger" onClick={DoDeleteComponent}>Usuń komponent</CButton>
+                    <CButton color="primary" onClick={DoSaveComponent}>Zapisz zmiany</CButton>
                 </div>
             </div>
         </CRow>

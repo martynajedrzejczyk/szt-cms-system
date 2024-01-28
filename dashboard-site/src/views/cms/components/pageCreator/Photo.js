@@ -2,18 +2,14 @@ import React, { useEffect } from "react"
 import "./styles.css"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton, CFormTextarea } = require("@coreui/react")
 
-const Photo = ({ data }) => {
-    const [text, setText] = React.useState(data.text50);
+const Photo = ({ data, saveComponent, deleteComponent }) => {
+    const [text, setText] = React.useState(data.propTextShort);
     const [order, setOrder] = React.useState(data.order_number);
     const [visibility, setVisibility] = React.useState(data.visible);
-    const [image, setImage] = React.useState();
-    const [imgBuffor, setImgBuffor] = React.useState(null);
-
-    useEffect(() => {
-        if (data.image) {
-            setImage(data.image[0]);
-        }
-    }, [data.image])
+    const [image, setImage] = React.useState(null);
+    const [imgToSend, setImgToSend] = React.useState(data.propImages);
+    const [ifImgSend, setIfImgSend] = React.useState(data.propImages.length > 0);
+    console.log(data)
 
     const validateText200 = (e) => {
         if (e.target.value.length <= 200) {
@@ -22,15 +18,20 @@ const Photo = ({ data }) => {
             alert("Maksymalna długość tekstu wynosi 200 znaków")
         }
     }
-
-    const uploadImage = (e) => {
-        const file = e.target.files[0];
-        console.log(file);
-        setImgBuffor(file);
+    const DoDeleteComponent = () => {
+        deleteComponent(data._id, data.order_number, data.page_id)
     }
 
-    const saveImage = () => {
-        setImage(imgBuffor);
+    const DoSaveComponent = () => {
+        console.log({ page_id: data.page_id, component_type: "Title", text50: text, order_number: order, visible: visibility })
+        saveComponent({ _id: data._id, page_id: data.page_id, component_type: data.component_type, propTextShort: text, order_number: order, visible: visibility, propTextMid: "", propTextLong: "", propImages: imgToSend });
+    }
+
+    const onImageChange = (event) => {
+        if (event.target.files && event.target.files[0]) {
+            setImage(URL.createObjectURL(event.target.files[0]));
+            setImgToSend(event.target.files[0]);
+        }
     }
 
     return (
@@ -63,20 +64,27 @@ const Photo = ({ data }) => {
                         </CCol>
                     </CRow>
                     <CRow className="mb-3 popup-line">
-                        <CCol sm={9}>
-                            <CFormInput type="file" onChange={uploadImage} id="formFile" accept=".jpg, .jpeg, .png" />
-                        </CCol>
-                        <CCol sm={3}>
+                        {/* <CCol sm={9}> */}
+                        <CFormInput type="file" onChange={onImageChange} id="formFile" accept=".jpg, .jpeg, .png" />
+                        {/* </CCol> */}
+                        {/* <CCol sm={3}>
                             <CButton color="primary" onClick={saveImage}>Dodaj zdjęcie</CButton>
-                        </CCol>
+                        </CCol> */}
                     </CRow>
-                    {image ? <div className="image-box-hero-banner">
+                    {/* {image !== undefined ? <div className="image-box-hero-banner">
                         <img src={URL.createObjectURL(image)} alt="Przesłane zdjęcie" className="image-hero-banner" />
+                    </div> : <></>} */}
+                    {image !== undefined && ifImgSend === false ? <div className="image-box-hero-banner">
+                        <img src={image} alt="preview image" className="image-hero-banner" />
+                    </div> : <></>}
+                    {ifImgSend === true ? <div className="image-box-hero-banner">
+                        <img src={`http://localhost:5000/image?name=${data.propImages}`} alt="preview image" className="image-hero-banner" />
+
                     </div> : <></>}
                 </CRow>
                 <div className="component-box-footer">
-                    <CButton color="danger">Usuń komponent</CButton>
-                    <CButton color="primary">Zapisz zmiany</CButton>
+                    <CButton color="danger" onClick={DoDeleteComponent}>Usuń komponent</CButton>
+                    <CButton color="primary" onClick={DoSaveComponent}>Zapisz zmiany</CButton>
                 </div>
             </div>
         </CRow>

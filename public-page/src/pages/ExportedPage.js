@@ -1,0 +1,199 @@
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
+import { getNavigations } from "api/getData";
+import { getPages } from "api/getData";
+import { createRoutes } from "utils/formatRoutes";
+import "./style.css"
+
+// @mui material components
+// import Container from "@mui/material/Container";
+// import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card";
+
+// Material Kit 2 React components
+import MKTypography from "components/MKTypography";
+// import MKSocialButton from "components/MKSocialButton";
+
+// Material Kit 2 React examples
+import DefaultNavbar from "examples/Navbars/DefaultNavbar";
+// import DefaultFooter from "examples/Footers/DefaultFooter";
+// import FilledInfoCard from "examples/Cards/InfoCards/FilledInfoCard";
+import MKBox from "components/MKBox";
+
+// Images
+import bgImage from "assets/images/background.webp";
+import { getComponentsByPageId } from "api/getData";
+// import CenteredBlogCard from "examples/Cards/BlogCards/CenteredBlogCard";
+import { getComponentTypes } from "api/getData";
+// import Slider from "assets/theme/components/slider";
+// import { ViewCarousel } from "@mui/icons-material";
+// import Carousel from "./components/Carousel";
+// import CarouselComponent from "./components/Carousel";
+
+const ExportedPage = ({ page_id }) => {
+    const { pathname } = useLocation();
+    const [routes, setRoutes] = useState([]);
+    const [components, setComponents] = useState([]);
+    // const [componentTypes, setComponentTypes] = useState([]);
+    // Setting page scroll to 0 when changing the route
+    useEffect(() => {
+        document.documentElement.scrollTop = 0;
+        document.scrollingElement.scrollTop = 0;
+        getNavigations().then((navs) => {
+            setRoutes(navs);
+            getPages().then((pags) => {
+                setRoutes(createRoutes(navs, pags));
+                console.log(page_id)
+            })
+        }
+        );
+    }, [pathname]);
+
+    useEffect(() => {
+        console.log(page_id)
+        getComponentsByPageId(page_id).then((comps) => {
+            // comps.sort((a, b) => a.order_numer - b.order_numer);
+            // setComponents(comps);
+            getComponentTypes().then((types) => {
+                console.log(comps)
+                comps.map((comp) => {
+                    comp.component_type = types.find((type) => type._id === comp.component_type)?.name;
+                    return comp;
+                })
+                setComponents(comps);
+                console.log(comps)
+            })
+        })
+
+    }, [page_id]);
+
+    return (
+        <>
+            <DefaultNavbar
+                routes={routes}
+                // action={{
+                //     type: "external",
+                //     route: "https://www.creative-tim.com/product/material-kit-react",
+                //     label: "free download",
+                //     color: "info",
+                // }}
+                sticky
+            />
+            <MKBox
+                minHeight="25vh"
+                width="100%"
+                sx={{
+                    backgroundImage: `url(${bgImage})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "top",
+                    display: "grid",
+                    placeItems: "center",
+                }}
+            ></MKBox>
+            <Card
+                sx={{
+                    p: 2,
+                    mx: { xs: 2, lg: 3 },
+                    mt: 2,
+                    mb: 4,
+                    backgroundColor: ({ palette: { white }, functions: { rgba } }) => rgba(white.main, 0.8),
+                    backdropFilter: "saturate(200%) blur(30px)",
+                    boxShadow: ({ boxShadows: { xxl } }) => xxl,
+                    minWidth: "80%"
+                    // margin: "10px"
+                }}
+            >
+                {components.map((component, index) => {
+                    if (component.component_type === "Tytuł") {
+                        return (
+                            <MKTypography key={index}
+                                variant="h1"
+                                // color="black"
+                                sx={{
+                                    marginBottom: "20px"
+                                }}
+                            >
+                                {component.propTextShort}
+                            </MKTypography>
+                        )
+                    } else if (component.component_type === "Nagłówek 1") {
+                        return (
+                            <MKTypography key={index}
+                                variant="h2"
+                                // color="black"
+                                sx={{
+                                    marginBottom: "10px",
+                                }}
+                            >
+                                {component.propTextShort}
+                            </MKTypography>
+                        )
+                    } else if (component.component_type === "Nagłówek 2") {
+                        return (
+                            <MKTypography key={index}
+                                variant="h3"
+                                // color="black"
+                                sx={{
+                                    marginBottom: "10px",
+                                }}
+                            >
+                                {component.propTextShort}
+                            </MKTypography>
+                        )
+                    } else if (component.component_type === "Nagłówek 3") {
+                        return (
+                            <MKTypography key={index}
+                                variant="h4"
+                                // color="black"
+                                sx={{
+                                    marginBottom: "10px",
+                                }}
+                            >
+                                {component.propTextShort}
+                            </MKTypography>
+                        )
+                    } else if (component.component_type === "Akapit") {
+                        return (
+                            <MKTypography key={index}
+                                variant="body1"
+                                fontWeight="light" color="text"
+                                sx={{
+                                    marginBottom: "10px",
+                                    width: "80%",
+                                    textAlign: "justify",
+                                    textJustify: "inter-word"
+                                }}
+                            // color="black"
+                            >
+                                {component.propTextLong}
+                            </MKTypography>
+                        )
+                    } else if (component.component_type === "Zdjęcie") {
+                        return (
+                            <div className="image-container" key={index}>
+                                <img src={`http://localhost:5000/image?name=${component.propImages}`} alt="preview image" className="image-img" />
+                                <div className="image-overlay">
+                                    <div className="image-text">{component.propTextShort}</div>
+                                </div>
+                            </div>)
+                    } else if (component.component_type === "Slider") {
+                        return (<></>
+                            // <CarouselComponent key={index}></CarouselComponent>
+                        )
+                        // <Carousel></Carousel>
+                    }
+                }
+                )}
+            </Card>
+
+
+
+        </>
+    );
+}
+export default ExportedPage;
+
+ExportedPage.propTypes = {
+    page_id: PropTypes.string.isRequired,
+};

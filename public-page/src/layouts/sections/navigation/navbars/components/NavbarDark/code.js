@@ -5,9 +5,27 @@ import MKBox from "components/MKBox";
 import DefaultNavbar from "examples/Navbars/DefaultNavbar";
 
 // Routes
-import routes from "routes";
+// import routes from "routes";
+import { getNavigations } from "api/getData";
+import { getPages } from "api/getData";
+// import { formatRoutes } from "utils/formatRoutes";
+import { createRoutes } from "utils/formatRoutes";
+import { useEffect, useState } from "react";
 
 function NavbarDark() {
+  const [routes, setRoutes] = useState([]);
+  // Setting page scroll to 0 when changing the route
+  useEffect(() => {
+    document.documentElement.scrollTop = 0;
+    document.scrollingElement.scrollTop = 0;
+    getNavigations().then((navs) => {
+      setRoutes(navs);
+      getPages().then((pags) => {
+        setRoutes(createRoutes(navs, pags));
+      })
+    }
+    );
+  }, []);
   return (
     <MKBox variant="gradient" bgColor="dark" shadow="sm" py={0.25}>
       <DefaultNavbar

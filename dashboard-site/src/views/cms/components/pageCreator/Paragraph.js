@@ -2,8 +2,8 @@ import React from "react"
 import "./styles.css"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton, CFormTextarea } = require("@coreui/react")
 
-const Paragraph = ({ data }) => {
-    const [text1500, setText1500] = React.useState(data.text50);
+const Paragraph = ({ data, saveComponent, deleteComponent }) => {
+    const [text1500, setText1500] = React.useState(data.propTextLong);
     const [order, setOrder] = React.useState(data.order_number);
     const [visibility, setVisibility] = React.useState(data.visible);
 
@@ -14,6 +14,12 @@ const Paragraph = ({ data }) => {
             alert("Maksymalna długość tekstu wynosi 50 znaków")
         }
     }
+    const DoDeleteComponent = () => {
+        deleteComponent(data._id, data.order_number, data.page_id)
+    }
+    const DoSaveComponent = () => {
+        saveComponent({ _id: data._id, page_id: data.page_id, component_type: data.component_type, propTextShort: "", order_number: order, visible: visibility, propTextMid: "", propTextLong: text1500, propImages: "" });
+    }                              //id, page_id, propTextShort, propTextMid, propTextLong, propImages, order_number, visible
     return (
         <CRow className="mb-8">
             <div className="component-box">
@@ -40,13 +46,13 @@ const Paragraph = ({ data }) => {
                             Treść
                         </CFormLabel>
                         <CCol sm={8}>
-                            <CFormTextarea id="exampleFormControlTextarea1" className="textarea-input" value={text1500} onChange={setText1500} rows={3}></CFormTextarea>
+                            <CFormTextarea id="exampleFormControlTextarea1" className="textarea-input" value={text1500} onChange={validateText1500} rows={3}></CFormTextarea>
                         </CCol>
                     </CRow>
                 </CRow>
                 <div className="component-box-footer">
-                    <CButton color="danger">Usuń komponent</CButton>
-                    <CButton color="primary">Zapisz zmiany</CButton>
+                    <CButton color="danger" onClick={DoDeleteComponent}>Usuń komponent</CButton>
+                    <CButton color="primary" onClick={DoSaveComponent}>Zapisz zmiany</CButton>
                 </div>
             </div>
         </CRow>
