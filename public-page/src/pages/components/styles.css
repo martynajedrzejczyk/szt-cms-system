@@ -1,0 +1,21 @@
+.herobanner-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    background-color:#f0f2f5;
+    padding: 15px;
+}
+
+.hero-image {
+    height: 500px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.herobanner-text {
+    overflow: auto;
+}

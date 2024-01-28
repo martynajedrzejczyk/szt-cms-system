@@ -66,7 +66,7 @@ const Opinions = () => {
       console.log(users);
       getOpinions().then((data) => {
         console.log(data);
-        const states = ['Oczekująca', 'Odrzucona', 'Przyjęta'];
+        const states = ['Oczekujące', 'Odrzucona', 'Przyjęta'];
         const options = states.map((state) => {
           return {
             value: state,
@@ -80,7 +80,7 @@ const Opinions = () => {
             stars: opinion.stars,
             status: opinion.status,
             moderate_opinion: (
-              opinion.status === 'Oczekująca' ?
+              opinion.status === 'Oczekujące' ?
                 <div className='opinions-moderate'><CButton color="success" onClick={() => editStatus(opinion._id, 'Przyjęta')}>Przyjmij</CButton><CButton color="danger" onClick={() => editStatus(opinion._id, 'Odrzucona')}>Odrzuć</CButton></div> : opinion.status === 'Odrzucona' ?
                   <CButton color="success" onClick={() => editStatus(opinion._id, 'Przyjęta')}>Przyjmij</CButton> :
                   <CButton color="danger" onClick={() => editStatus(opinion._id, 'Odrzucona')}>Odrzuć</CButton>
@@ -93,7 +93,7 @@ const Opinions = () => {
           }
         })
         console.log(opinionList)
-        if (activeTab === 0) setOpinions(opinionList.filter((opinion) => opinion.status === 'Oczekująca'));
+        if (activeTab === 0) setOpinions(opinionList.filter((opinion) => opinion.status === 'Oczekujące'));
         if (activeTab === 1) setOpinions(opinionList.filter((opinion) => opinion.status === 'Odrzucona'));
         if (activeTab === 2) setOpinions(opinionList.filter((opinion) => opinion.status === 'Przyjęta'));
       })
