@@ -2,18 +2,12 @@ import React from "react"
 import "./styles.css"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton } = require("@coreui/react")
 
-const Slider = ({ data, saveComponent }) => {
+const Slider = ({ data, saveComponent, deleteComponent }) => {
     const [text, setText] = React.useState(data.propTextShort);
     const [order, setOrder] = React.useState(data.order_number);
     const [visibility, setVisibility] = React.useState(data.visible);
     const [choosenImage, setChoosenImage] = React.useState([]);
-    const [images, setImages] = React.useState([]);
-
-    React.useEffect(() => {
-        if (data.images) {
-            setImages(data.images);
-        }
-    }, [data.images])
+    const [imgToSend, setImgToSend] = React.useState(data.propImages);
 
     const validateText50 = (e) => {
         if (e.target.value.length <= 50) {
@@ -22,49 +16,41 @@ const Slider = ({ data, saveComponent }) => {
             alert("Maksymalna długość tekstu wynosi 50 znaków")
         }
     }
-    const saveImage = () => {
-        const oldFiles = images;
-        const fileOrder = oldFiles.length + 1;
-        setImages([...oldFiles, [choosenImage, fileOrder]]);
+    const DoDeleteComponent = () => {
+        deleteComponent(data._id, data.order_number, data.page_id)
     }
-    const uploadImage = (e) => {
-        const file = e.target.files[0];
-        console.log(file);
-        setChoosenImage(file);
-    }
-
-    const deleteImage = (imageOrder) => {
-        if (images.length === 1) {
-            setImages([]);
-            return;
+    const onImageChange = (event) => {
+        if (event.target.files && event.target.files[0]) {
+            const oldImages = imgToSend;
+            if (oldImages === undefined) {
+                setImgToSend([event.target.files[0]]);
+            } else
+                setImgToSend([...oldImages, event.target.files[0]]);
         }
-        const oldFiles = images;
-        oldFiles.splice(imageOrder - 1, 1);
-        console.log(oldFiles)
-        oldFiles.forEach((file, index) => {
-            console.log(index, imageOrder, file)
-            if (index >= imageOrder - 1)
-                file[1] = file[1] - 1;
-        })
-        setImages([...oldFiles]);
+    }
+    const removeChanges = () => {
+        setText(data.propTextShort);
+        setOrder(data.order_number);
+        setVisibility(data.visible);
+        setImgToSend(data.propImages);
     }
 
-    const changeImageOrder = (newOrder, image) => {
-        // const oldFiles = images;
-        // const oldOrder = image[1];
-        // const newOrderInt = parseInt(newOrder);
-        // console.log("przed", images)
-        // if (newOrderInt - 1 > oldFiles.length || newOrderInt < 1) {
-        //     alert("Nieprawidłowa wartość");
-        //     return;
-        // }
-        // const newFiles = array_move(oldFiles, oldOrder - 1, newOrderInt - 1);
-        // console.log("po", newFiles)
-        // setImages([...newFiles]);
+    const removeImage = (img) => {
+        const index = imgToSend.indexOf(img);
+        // console.log("remove", img, index, imgToSend)
+        if (index > -1) {
+            imgToSend.splice(index, 1);
+            console.log(imgToSend)
+            setImgToSend(imgToSend);
+            saveComponent({ _id: data._id, page_id: data.page_id, component_type: data.component_type, propTextShort: text, order_number: order, visible: visibility, propTextMid: "", propTextLong: "", propImages: imgToSend });
+        }
     }
+
     const DoSaveComponent = () => {
-        saveComponent({ _id: data._id, page_id: data.page_id, component_type: data.component_type, propTextShort: text, order_number: order, visible: visibility, propTextMid: "", propTextLong: "", propImages: images });
+        console.log(imgToSend)
+        saveComponent({ _id: data._id, page_id: data.page_id, component_type: data.component_type, propTextShort: text, order_number: order, visible: visibility, propTextMid: "", propTextLong: "", propImages: imgToSend });
     }
+
 
     return (
         <CRow className="mb-8">
@@ -97,36 +83,21 @@ const Slider = ({ data, saveComponent }) => {
                     </CRow>
                     <h6>Zdjęcia</h6>
                     <CRow className="mb-3 popup-line">
-                        <CCol sm={10}>
-                            <CFormInput type="file" onChange={uploadImage} id="formFile" accept=".jpg, .jpeg, .png" />
-                        </CCol>
-                        <CCol sm={2}>
-                            <CButton color="primary" onClick={saveImage}>Dodaj zdjęcie</CButton>
-                        </CCol>
+                        <CFormInput type="file" onChange={onImageChange} id="formFile" accept=".jpg, .jpeg, .png" />
                     </CRow>
-                    {images.map((image, index) => {
-                        console.log(images)
-                        const img = image[0];
-                        const imageOrder = image[1];
-                        console.log(image)
+                    {imgToSend ? imgToSend.map((img, index) => {
                         return (
-                            <div className="image-box-slider" key={index}>
-                                <div>Zdjęcie {imageOrder}</div>
-                                <img src={URL.createObjectURL(img)} alt="Przesłane zdjęcie" />
-                                <div className="order-box">
-                                    <span className="order-label">Kolejność</span>
-                                    <CCol sm={4}>
-                                        <CFormInput type="number" id="inputprice" value={imageOrder} onChange={(e) => changeImageOrder(e.target.value, image)} />
-                                    </CCol>
-                                </div>
-                                <CButton color="danger" onClick={() => deleteImage(imageOrder)}>Usuń zdjęcie</CButton>
-                            </div>
-                        )
-                    })
-                    }
+                            <div key={index} className="image-box-hero-banner">
+                                {typeof (img) === "string" ? <img src={`http://localhost:5000/image?name=${img}`} alt="preview image" className="image-hero-banner" /> :
+                                    <img src={URL.createObjectURL(img)} alt="preview image" className="image-hero-banner" />}
+
+                                <CButton onClick={() => removeImage(img)} color="danger">Usuń zdjęcie</CButton>
+                            </div>)
+                    }) : <></>}
                 </CRow>
                 <div className="component-box-footer">
-                    <CButton color="danger">Usuń komponent</CButton>
+                    <CButton color="danger" onClick={DoDeleteComponent}>Usuń komponent</CButton>
+                    <CButton color="warning" onClick={removeChanges}>Odrzuć zmiany</CButton>
                     <CButton color="primary" onClick={DoSaveComponent}>Zapisz zmiany</CButton>
                 </div>
             </div>

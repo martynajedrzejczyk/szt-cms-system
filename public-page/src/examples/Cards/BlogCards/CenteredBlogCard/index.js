@@ -14,34 +14,31 @@ Coded by www.creative-tim.com
 */
 
 // react-router components
-import { Link } from "react-router-dom";
 
 // prop-types is a library for typechecking of props
 import PropTypes from "prop-types";
 
 // @mui material components
 import Card from "@mui/material/Card";
-import MuiLink from "@mui/material/Link";
 
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
 import MKTypography from "components/MKTypography";
-import MKButton from "components/MKButton";
 
-function CenteredBlogCard({ image, title, description, action }) {
+function CenteredBlogCard({ image, title, description }) {
   return (
-    <Card>
-      <MKBox position="relative" borderRadius="lg" mx={2} mt={-3}>
+    <Card width="200px">
+      <MKBox position="relative" borderRadius="lg" mx={2} width="100px" >
         <MKBox
           component="img"
           src={image}
           alt={title}
           borderRadius="lg"
-          width="100%"
+          width="100px"
           position="relative"
           zIndex={1}
         />
-        <MKBox
+        {/* <MKBox
           borderRadius="lg"
           shadow="md"
           width="100%"
@@ -55,9 +52,9 @@ function CenteredBlogCard({ image, title, description, action }) {
             filter: "blur(12px)",
             backgroundSize: "cover",
           }}
-        />
+        /> */}
       </MKBox>
-      <MKBox p={3} mt={-1} textAlign="center">
+      <MKBox p={3} textAlign="center">
         <MKTypography display="inline" variant="h5" textTransform="capitalize" fontWeight="regular">
           {title}
         </MKTypography>
@@ -66,29 +63,7 @@ function CenteredBlogCard({ image, title, description, action }) {
             {description}
           </MKTypography>
         </MKBox>
-        {action.type === "external" ? (
-          <MKButton
-            component={MuiLink}
-            href={action.route}
-            target="_blank"
-            rel="noreferrer"
-            variant="gradient"
-            size="small"
-            color={action.color ? action.color : "dark"}
-          >
-            {action.label}
-          </MKButton>
-        ) : (
-          <MKButton
-            component={Link}
-            to={action.route}
-            variant="gradient"
-            size="small"
-            color={action.color ? action.color : "dark"}
-          >
-            {action.label}
-          </MKButton>
-        )}
+
       </MKBox>
     </Card>
   );

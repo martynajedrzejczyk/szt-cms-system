@@ -17,6 +17,7 @@ class Image:
         try:
             # data = request.get_json()
             data = request.args
+            print(data)
             image_path = Image._get_image_path(data.get('name'))
 
             if os.path.exists(image_path):

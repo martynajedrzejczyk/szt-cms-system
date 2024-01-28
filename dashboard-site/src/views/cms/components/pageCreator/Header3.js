@@ -2,7 +2,7 @@ import React from "react"
 import "./styles.css"
 const { CRow, CFormLabel, CCol, CFormInput, CFormCheck, CButton } = require("@coreui/react")
 
-const Header3 = ({ data, saveComponent }) => {
+const Header3 = ({ data, saveComponent, deleteComponent }) => {
     const [text, setText] = React.useState(data.propTextShort);
     const [order, setOrder] = React.useState(data.order_number);
     const [visibility, setVisibility] = React.useState(data.visible);
@@ -12,6 +12,9 @@ const Header3 = ({ data, saveComponent }) => {
         } else {
             alert("Maksymalna długość tekstu wynosi 50 znaków")
         }
+    }
+    const DoDeleteComponent = () => {
+        deleteComponent(data._id, data.order_number, data.page_id)
     }
     const DoSaveComponent = () => {
         console.log({ page_id: data.page_id, component_type: "Title", text50: text, order_number: order, visible: visibility })
@@ -48,7 +51,7 @@ const Header3 = ({ data, saveComponent }) => {
                     </CRow>
                 </CRow>
                 <div className="component-box-footer">
-                    <CButton color="danger">Usuń komponent</CButton>
+                    <CButton color="danger" onClick={DoDeleteComponent}>Usuń komponent</CButton>
                     <CButton color="primary" onClick={DoSaveComponent}>Zapisz zmiany</CButton>
                 </div>
             </div>

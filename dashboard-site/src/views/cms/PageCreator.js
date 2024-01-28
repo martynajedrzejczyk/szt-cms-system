@@ -1,7 +1,7 @@
 import React from 'react'
 import { CCol, CRow, CButton, CTable, CFormSwitch, CFormLabel, CFormInput, CFormCheck, CFormSelect, CListGroup } from '@coreui/react'
 import { ReactSession } from 'react-client-session';
-import { Navigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 import "./PageCreator.css"
 import { getComponentTypes, getComponentsByPageId, getNavigations } from 'src/api/getData';
@@ -23,6 +23,7 @@ import { getPage } from 'src/api/getData';
 import { putComponent, putPage } from 'src/api/putData';
 import OpinionsComponent from './components/pageCreator/OpinionsComponent';
 import OpinionsForm from './components/pageCreator/OpinionsForm';
+import { deleteComponent } from 'src/api/deleteData';
 
 const PageCreator = () => {
     let location = useLocation();
@@ -43,6 +44,8 @@ const PageCreator = () => {
     const [ifAddComponent, setIfAddComponent] = React.useState(false);
 
     const [currPageId, setCurrPageId] = React.useState(locationPath.split("/")[2]);
+
+    let navigate = useNavigate();
 
     React.useEffect(() => {
         if (locationState["mode"] === "add") {
@@ -110,7 +113,8 @@ const PageCreator = () => {
             if (response.status === "success") {
                 alert("Dodano stronę")
                 setMode("edit")
-                setCurrPageId(response.data.page_id)
+                setCurrPageId(response.page_id)
+                navigate('/pageEditor/' + response.page_id, { state: { mode: 'edit' } });
             } else {
                 alert("Błąd podczas dodawania strony")
             }
@@ -174,23 +178,97 @@ const PageCreator = () => {
         const componentType = componentTypes.find((componentType) => componentType._id === exportedData.component_type)?.name;
         console.log(componentType)
         if (componentType === "Zdjęcie") {
-            postImage(exportedData.propImages).then((response) => {
-                console.log(response)
-                if (response.status === 200) {
-                    putComponent(exportedData._id, exportedData.page_id, exportedData.propTextShort, exportedData.propTextMid, exportedData.propTextLong, response.data.name, exportedData.order_number, exportedData.visible).then((response) => {
-                        console.log(response)
-                        if (response.status === "success") {
-                            alert("Zapisano komponent")
-                            loadData();
+            if (typeof (exportedData.propImages) === "string") {
+                putComponent(exportedData._id, exportedData.page_id, exportedData.propTextShort, exportedData.propTextMid, exportedData.propTextLong, exportedData.propImages, exportedData.order_number, exportedData.visible).then((response) => {
+                    console.log(response)
+                    if (response.status === "success") {
+                        alert("Zapisano komponent")
+                        loadData();
+                    } else {
+                        alert("Błąd podczas zapisywania komponentu")
+                    }
+                })
+            } else {
+                postImage(exportedData.propImages).then((response) => {
+                    console.log(response)
+                    if (response.status === 200) {
+                        putComponent(exportedData._id, exportedData.page_id, exportedData.propTextShort, exportedData.propTextMid, exportedData.propTextLong, response.data.name, exportedData.order_number, exportedData.visible).then((response) => {
+                            console.log(response)
+                            if (response.status === "success") {
+                                alert("Zapisano komponent")
+                                loadData();
+                            } else {
+                                alert("Błąd podczas zapisywania komponentu")
+                            }
+                        })
+                    } else {
+                        alert("Błąd podczas zapisywania zdjęcia")
+                    }
+                })
+            }
+        } else if (componentType === "Hero banner" || componentType === "Slider") {
+            let imgCounter = 0;
+            let newPropImages = [];
+            console.log(exportedData)
+            let images = exportedData.propImages;
+            if (images.length === 0) {
+                putComponent(exportedData._id, exportedData.page_id, exportedData.propTextShort, exportedData.propTextMid, exportedData.propTextLong, newPropImages, exportedData.order_number, exportedData.visible).then((response) => {
+                    console.log(response)
+                    if (response.status === "success") {
+                        alert("Zapisano komponent")
+                        loadData();
+                    } else {
+                        alert("Błąd podczas zapisywania komponentu")
+                    }
+                })
+                return;
+            }
+            images.forEach((image, index) => {
+                if (typeof (image) === "string") {
+                    newPropImages.push(image);
+                    imgCounter++;
+                    console.log("string", image)
+                    if (imgCounter === images.length) {
+                        putComponent(exportedData._id, exportedData.page_id, exportedData.propTextShort, exportedData.propTextMid, exportedData.propTextLong, newPropImages, exportedData.order_number, exportedData.visible).then((response) => {
+                            console.log(response)
+                            if (response.status === "success") {
+                                alert("Zapisano komponent")
+                                loadData();
+                            } else {
+                                alert("Błąd podczas zapisywania komponentu")
+                            }
+                        })
+                    }
+                } else {
+                    console.log("cosinnego", image)
+                    postImage(image).then((response) => {
+                        console.log("postImage", image, response)
+                        if (response.status === 200) {
+                            newPropImages.push(response.data.name);
                         } else {
-                            alert("Błąd podczas zapisywania komponentu")
+                            alert("Błąd podczas zapisywania zdjęcia")
+                        }
+                        imgCounter++;
+                        if (imgCounter === images.length) {
+                            putComponent(exportedData._id, exportedData.page_id, exportedData.propTextShort, exportedData.propTextMid, exportedData.propTextLong, newPropImages, exportedData.order_number, exportedData.visible).then((response) => {
+                                console.log(response)
+                                if (response.status === "success") {
+                                    alert("Zapisano komponent")
+                                    loadData();
+                                } else {
+                                    alert("Błąd podczas zapisywania komponentu")
+                                }
+                            })
                         }
                     })
-                } else {
-                    alert("Błąd podczas zapisywania zdjęcia")
                 }
             })
+
+
+        } else if (componentType === "Slider") {
         }
+
+        loadData();
     }
 
     const saveAttributes = () => {
@@ -203,6 +281,19 @@ const PageCreator = () => {
                 loadData();
             } else {
                 alert("Błąd podczas zapisywania właściwości strony")
+            }
+        })
+    }
+
+    const deleteComponentFromPage = (id, order_number, page_id) => {
+        console.log(id, order_number)
+        deleteComponent(id, order_number, page_id).then((response) => {
+            console.log(response)
+            if (response.status === "success") {
+                alert("Usunięto komponent")
+                loadData();
+            } else {
+                alert("Błąd podczas usuwania komponentu")
             }
         })
     }
@@ -252,16 +343,6 @@ const PageCreator = () => {
                         <CFormSelect id="inputwtext" value={navigation_id} onChange={(e) => setNavigation_id(e.target.value)} options={navOptions} />
                     </CCol>
                 </CRow>
-                {/* nie ma ponizej bo wywalamy na ostatnie miejsce w sekcji navigation strone  */}
-                {/* <CRow className="mb-3 popup-line">
-                    <CFormLabel htmlFor="inputtext" className="col-sm-2 col-form-label">
-                        Navigation order
-                    </CFormLabel>
-                    <CCol sm={8}>
-                        <CFormSelect id="inputtext" value={navigation_order} onChange={(e) => setNavigation_order(e.target.value)} options={navOptions} />
-                    </CCol>
-                </CRow> */}
-                {/* <CFormSelect id="inputwtext" value={navigation_id} onChange={(e) => setNavigation_id(e.target.value)} options={navOptions} />   </CRow> */}
                 {mode === "edit" ? <>
                     <CRow className="mb-3">
                         <CCol xs={8}>
@@ -271,37 +352,35 @@ const PageCreator = () => {
                             <CButton color="primary" onClick={addComponent}>Dodaj komponent</CButton>
                         </CCol>
                     </CRow>
-                    <CRow>
-                        <CCol xs={9}>
+                    <CRow key={3}>
+                        <CCol xs={9} key={4}>
                             {components.map((component, index) => {
-                                // console.log(component)
                                 if (component.component_type === componentTypes.find((componentType) => componentType.name === "Tytuł")?._id) {
-                                    // if (component.type === "Tytuł") {
-                                    return <Title key={index} data={component} saveComponent={saveComponent} />
+                                    return <Title key={index} data={component} saveComponent={saveComponent} deleteComponent={deleteComponentFromPage} />
                                 } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Nagłówek 1")?._id) {
-                                    return <Header1 key={index} data={component} saveComponent={saveComponent} />
+                                    return <Header1 key={index} data={component} saveComponent={saveComponent} deleteComponent={deleteComponentFromPage} />
                                 } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Nagłówek 2")?._id) {
-                                    return <Header2 key={index} data={component} saveComponent={saveComponent} />
+                                    return <Header2 key={index} data={component} saveComponent={saveComponent} deleteComponent={deleteComponentFromPage} />
                                 } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Nagłówek 3")?._id) {
-                                    return <Header3 key={index} data={component} saveComponent={saveComponent} />
+                                    return <Header3 key={index} data={component} saveComponent={saveComponent} deleteComponent={deleteComponentFromPage} />
                                 } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Slider")?._id) {
-                                    return <Slider key={index} data={component} saveComponent={saveComponentWithImages} />
+                                    return <Slider key={index} data={component} saveComponent={saveComponentWithImages} deleteComponent={deleteComponentFromPage} />
                                 } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Hero banner")?._id) {
-                                    return <HeroBanner key={index} data={component} saveComponent={saveComponentWithImages} />
+                                    return <HeroBanner key={index} data={component} saveComponent={saveComponentWithImages} deleteComponent={deleteComponentFromPage} />
                                 } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Pracownicy")?._id) {
-                                    return <EmployeesComponent key={index} data={component} saveComponent={saveComponent} />
+                                    return <EmployeesComponent key={index} data={component} saveComponent={saveComponent} deleteComponent={deleteComponentFromPage} />
                                 } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Usługi")?._id) {
-                                    return <ServicesComponent key={index} data={component} saveComponent={saveComponent} />
+                                    return <ServicesComponent key={index} data={component} saveComponent={saveComponent} deleteComponent={deleteComponentFromPage} />
                                 } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Formularz kontaktowy")?._id) {
-                                    return <ContactForm key={index} data={component} saveComponent={saveComponent} />
+                                    return <ContactForm key={index} data={component} saveComponent={saveComponent} deleteComponent={deleteComponentFromPage} />
                                 } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Akapit")?._id) {
-                                    return <Paragraph key={index} data={component} saveComponent={saveComponent} />
+                                    return <Paragraph key={index} data={component} saveComponent={saveComponent} deleteComponent={deleteComponentFromPage} />
                                 } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Zdjęcie")?._id) {
-                                    return <Photo key={index} data={component} saveComponent={saveComponentWithImages} />
+                                    return <Photo key={index} data={component} saveComponent={saveComponentWithImages} deleteComponent={deleteComponentFromPage} />
                                 } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Opinie")?._id) {
-                                    return <OpinionsComponent key={index} data={component} saveComponent={saveComponent} />
+                                    return <OpinionsComponent key={index} data={component} saveComponent={saveComponent} deleteComponent={deleteComponentFromPage} />
                                 } else if (component.component_type === componentTypes.find((componentType) => componentType.name === "Opinie - formularz")?._id) {
-                                    return <OpinionsForm key={index} data={component} saveComponent={saveComponent} />
+                                    return <OpinionsForm key={index} data={component} saveComponent={saveComponent} deleteComponent={deleteComponentFromPage} />
                                 } else {
                                     return <></>
                                 }
