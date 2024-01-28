@@ -5,6 +5,9 @@ import { getNavigations } from "api/getData";
 import { getPages } from "api/getData";
 import { createRoutes } from "utils/formatRoutes";
 import "./style.css"
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
+import Testimonials from "pages/Presentation/sections/Testimonials";
 
 // @mui material components
 // import Container from "@mui/material/Container";
@@ -30,6 +33,11 @@ import { getComponentTypes } from "api/getData";
 // import { ViewCarousel } from "@mui/icons-material";
 // import Carousel from "./components/Carousel";
 // import CarouselComponent from "./components/Carousel";
+import HeroBanner from "./components/BasicSlider";
+import OpinionForm from "./Presentation/components/OpinionForm";
+import { postOpinion } from "api/postData";
+// import Team from "./LandingPages/AboutUs/sections/Team";
+import ContactUs from "./LandingPages/ContactUs";
 
 const ExportedPage = ({ page_id }) => {
     const { pathname } = useLocation();
@@ -44,29 +52,36 @@ const ExportedPage = ({ page_id }) => {
             setRoutes(navs);
             getPages().then((pags) => {
                 setRoutes(createRoutes(navs, pags));
-                console.log(page_id)
             })
         }
         );
     }, [pathname]);
 
     useEffect(() => {
-        console.log(page_id)
         getComponentsByPageId(page_id).then((comps) => {
             // comps.sort((a, b) => a.order_numer - b.order_numer);
             // setComponents(comps);
             getComponentTypes().then((types) => {
-                console.log(comps)
                 comps.map((comp) => {
                     comp.component_type = types.find((type) => type._id === comp.component_type)?.name;
                     return comp;
                 })
-                setComponents(comps);
-                console.log(comps)
+                setComponents(comps.sort((a, b) => a.order_number - b.order_number));
             })
         })
 
     }, [page_id]);
+
+    const sendOpinion = (author, content, rating) => {
+        return (e) => {
+            e.preventDefault();
+            console.log(author, content, rating);
+            postOpinion(author, content, rating).then((res) => {
+                console.log(res);
+            }
+            )
+        }
+    }
 
     return (
         <>
@@ -100,91 +115,117 @@ const ExportedPage = ({ page_id }) => {
                     backgroundColor: ({ palette: { white }, functions: { rgba } }) => rgba(white.main, 0.8),
                     backdropFilter: "saturate(200%) blur(30px)",
                     boxShadow: ({ boxShadows: { xxl } }) => xxl,
-                    minWidth: "80%"
+                    minWidth: "80%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
                     // margin: "10px"
                 }}
             >
                 {components.map((component, index) => {
-                    if (component.component_type === "Tytuł") {
-                        return (
-                            <MKTypography key={index}
-                                variant="h1"
+                    console.log(component)
+                    if (component.visible === true) {
+                        if (component.component_type === "Tytuł") {
+                            return (
+                                <MKTypography key={index}
+                                    variant="h1"
+                                    // color="black"
+                                    sx={{
+                                        marginBottom: "20px"
+                                    }}
+                                >
+                                    {component.propTextShort}
+                                </MKTypography>
+                            )
+                        } else if (component.component_type === "Nagłówek 1") {
+                            return (
+                                <MKTypography key={index}
+                                    variant="h2"
+                                    // color="black"
+                                    sx={{
+                                        marginBottom: "10px",
+                                    }}
+                                >
+                                    {component.propTextShort}
+                                </MKTypography>
+                            )
+                        } else if (component.component_type === "Nagłówek 2") {
+                            return (
+                                <MKTypography key={index}
+                                    variant="h3"
+                                    // color="black"
+                                    sx={{
+                                        marginBottom: "10px",
+                                    }}
+                                >
+                                    {component.propTextShort}
+                                </MKTypography>
+                            )
+                        } else if (component.component_type === "Nagłówek 3") {
+                            return (
+                                <MKTypography key={index}
+                                    variant="h4"
+                                    // color="black"
+                                    sx={{
+                                        marginBottom: "10px",
+                                    }}
+                                >
+                                    {component.propTextShort}
+                                </MKTypography>
+                            )
+                        } else if (component.component_type === "Akapit") {
+                            return (
+                                <MKTypography key={index}
+                                    variant="body1"
+                                    fontWeight="light" color="text"
+                                    sx={{
+                                        marginBottom: "10px",
+                                        width: "80%",
+                                        textAlign: "justify",
+                                        textJustify: "inter-word"
+                                    }}
                                 // color="black"
-                                sx={{
-                                    marginBottom: "20px"
-                                }}
-                            >
-                                {component.propTextShort}
-                            </MKTypography>
-                        )
-                    } else if (component.component_type === "Nagłówek 1") {
-                        return (
-                            <MKTypography key={index}
-                                variant="h2"
-                                // color="black"
-                                sx={{
-                                    marginBottom: "10px",
-                                }}
-                            >
-                                {component.propTextShort}
-                            </MKTypography>
-                        )
-                    } else if (component.component_type === "Nagłówek 2") {
-                        return (
-                            <MKTypography key={index}
-                                variant="h3"
-                                // color="black"
-                                sx={{
-                                    marginBottom: "10px",
-                                }}
-                            >
-                                {component.propTextShort}
-                            </MKTypography>
-                        )
-                    } else if (component.component_type === "Nagłówek 3") {
-                        return (
-                            <MKTypography key={index}
-                                variant="h4"
-                                // color="black"
-                                sx={{
-                                    marginBottom: "10px",
-                                }}
-                            >
-                                {component.propTextShort}
-                            </MKTypography>
-                        )
-                    } else if (component.component_type === "Akapit") {
-                        return (
-                            <MKTypography key={index}
-                                variant="body1"
-                                fontWeight="light" color="text"
-                                sx={{
-                                    marginBottom: "10px",
-                                    width: "80%",
-                                    textAlign: "justify",
-                                    textJustify: "inter-word"
-                                }}
-                            // color="black"
-                            >
-                                {component.propTextLong}
-                            </MKTypography>
-                        )
-                    } else if (component.component_type === "Zdjęcie") {
-                        return (
-                            <div className="image-container" key={index}>
-                                <img src={`http://localhost:5000/image?name=${component.propImages}`} alt="preview image" className="image-img" />
-                                <div className="image-overlay">
-                                    <div className="image-text">{component.propTextShort}</div>
+                                >
+                                    {component.propTextLong}
+                                </MKTypography>
+                            )
+                        } else if (component.component_type === "Zdjęcie") {
+                            return (
+                                <div className="image-container" key={index}>
+                                    <img src={`http://localhost:5000/image?name=${component.propImages}`} alt="preview image" className="image-img" />
+                                    <div className="image-overlay">
+                                        <div className="image-text">{component.propTextShort}</div>
+                                    </div>
+                                </div>)
+                        } else if (component.component_type === "Slider") {
+                            return (
+                                <div className="carousel-container" key={index}>
+                                    <Carousel dynamicHeight={true} showArrows={true} key={index}>
+                                        {component.propImages.map((image, image_index) => {
+                                            return (
+                                                <div key={image_index}>
+                                                    <img src={`http://localhost:5000/image?name=${image}`} />
+                                                </div>
+                                            )
+                                        })}
+                                    </Carousel>
+                                    <p>{component.propTextShort}</p>
                                 </div>
-                            </div>)
-                    } else if (component.component_type === "Slider") {
-                        return (<></>
-                            // <CarouselComponent key={index}></CarouselComponent>
-                        )
-                        // <Carousel></Carousel>
+                            )
+                        } else if (component.component_type === "Hero banner") {
+                            return (<HeroBanner key={index} images={component.propImages} title={component.propTextShort} description={component.propTextMid} />)
+                        } else if (component.component_type === "Opinie") {
+                            return (
+                                <Testimonials key={index} />
+                            )
+                        } else if (component.component_type === "Opinie - formularz") {
+                            return (<OpinionForm onSubmit={sendOpinion} key={index} />)
+                        } else if (component.component_type === "Formularz kontaktowy") {
+                            return (<ContactUs key={index} />)
+                        }
                     }
+                })
                 }
-                )}
             </Card>
 
 
