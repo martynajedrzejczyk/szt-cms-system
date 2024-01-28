@@ -83,8 +83,14 @@ export const putComponent = async (id, page_id, propTextShort, propTextMid, prop
     return response.data;
 }
 
-export const putNavigation = async (id, name, order, visible, parent_id) => {
-    const response = await axiosWithCookies.put(`${databaseURL}city`, {
+export const putNavigation = async (id, name, order, parent_id, visible) => {
+    if(visible === undefined)
+    {
+        visible = false;
+    }
+    console.log(id, name, order, parent_id, visible)
+    const user_id = ReactSession.get("user").id;
+    const response = await axiosWithCookies.put(`${databaseURL}navigation`, {
         "_id": id, name, order, visible, parent_id
     });
     console.log(response)

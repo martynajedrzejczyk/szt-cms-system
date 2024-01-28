@@ -1,13 +1,20 @@
-import { CButton, CCol, CFormCheck, CFormInput, CFormLabel, CRow } from "@coreui/react";
+import { CButton, CCol, CFormCheck, CFormInput, CFormLabel, CRow, CFormSelect } from "@coreui/react";
 import "./Popup.css"
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const PopupNavigation = ({ name, visible, parentId, closePopup, changeData }) => {
+const PopupNavigation = ({ name, visible, parentId, closePopup, changeData, navigationToChoose }) => {
     const [newName, setNewName] = React.useState(name);
     const [newVisibility, setNewVisibility] = React.useState(visible);
     const [newOrder, setNewOrder] = React.useState("1");
-    const [newParentId, setNewParentId] = React.useState(null);
+    const [newParentId, setNewParentId] = React.useState(navigationToChoose.find((navigation) => navigation.id === parentId)._id);
+
+    const options = navigationToChoose.map((navigation) => {
+        return {
+            value: navigation._id,
+            label: navigation.name
+        }})
+
     return (
         <div className="popup-container">
             <div className="popup-header">
@@ -30,12 +37,12 @@ const PopupNavigation = ({ name, visible, parentId, closePopup, changeData }) =>
                     <CFormInput type="text" id="inputtext" value={newOrder} onChange={(e) => setNewOrder(e.target.value)} />
                 </CCol>
             </CRow>
-            <CRow className="mb-3">
+            <CRow className="mb-3 popup-line">
                 <CFormLabel htmlFor="inputtext" className="col-sm-3 col-form-label">
-                    ID rodzica
+                    Sekcja nadrzędna
                 </CFormLabel>
                 <CCol sm={8}>
-                    <CFormInput type="text" id="inputtext" value={newParentId} onChange={(e) => setNewParentId(e.target.value)} />
+                    <CFormSelect id="inputtext" value={newParentId} onChange={(e) => setNewParentId(e.target.value)} options={options} />
                 </CCol>
             </CRow>
             <CRow className="mb-3 popup-line">
