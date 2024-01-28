@@ -71,7 +71,8 @@ class Navigation:
     def update():
         try:
             update_data = request.get_json()
-            current_order = update_data['order']
+            current_order = db['Navigation'].find_one({'_id': ObjectId(update_data['_id'])})['order']
+            new_order = update_data['order']
             if 'name' not in update_data or 'visible' not in update_data or 'order' not in update_data:
                 return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
             updated_navigation = {
@@ -87,11 +88,18 @@ class Navigation:
             result = db['Navigation'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': updated_navigation})
 
             if result.modified_count > 0:
-                db['Navigation'].update_many({
-                    'order': {'$gte': current_order},
-                    'parent_id': update_data['parent_id'],
-                    '_id': {'$ne': ObjectId(update_data['_id'])}
-                }, {'$inc': {'order': 1}})
+                if new_order < current_order:
+                    db['Navigation'].update_many({
+                        'order': {'$gte': new_order, '$lt': current_order},
+                        'parent_id': update_data['parent_id'],
+                        '_id': {'$ne': ObjectId(update_data['_id'])}
+                    }, {'$inc': {'order': 1}})
+                elif new_order > current_order:
+                    db['Component'].update_many({
+                        'order': {'$gt': current_order, '$lte': new_order},
+                        'parent_id': update_data['parent_id'],
+                        '_id': {'$ne': ObjectId(update_data['_id'])}
+                    }, {'$inc': {'order_number': -1}})
                 return jsonify({'status': 'success', 'message': f'{update_data["name"]} successfully updated.'}), 200
             else:
                 return jsonify({'status': 'error', 'message': f'Navigation {update_data["name"]} not found'}), 400

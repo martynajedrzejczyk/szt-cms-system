@@ -38,7 +38,6 @@ class Page:
     def write():
         try:
             data = request.get_json()
-            current_order = data['order_number']
             if 'name' not in data or 'endpoint' not in data or 'visible' not in data or 'navigation_id' not in data:
                 return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
 
@@ -69,7 +68,8 @@ class Page:
         try:
             update_data = request.get_json()
 
-            current_order = update_data['navigation_order']
+            current_order = db['Page'].find_one({'_id': ObjectId(update_data['_id'])})['navigation_order']
+            new_order = update_data['navigation_order']
 
             result = db['Page'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
                 'name': update_data['name'],
@@ -81,11 +81,18 @@ class Page:
                 'navigation_order': update_data['navigation_order']}})
 
             if result.modified_count > 0:
-                db['Page'].update_many({
-                    'navigation_order': {'$gte': current_order},
-                    'navigation_id': update_data['navigation_id'],
-                    '_id': {'$ne': ObjectId(update_data['_id'])}
-                }, {'$inc': {'navigation_order': 1}})
+                if new_order < current_order:
+                    db['Page'].update_many({
+                        'navigation_order': {'$gte': new_order, '$lt': current_order},
+                        'navigation_id': update_data['navigation_id'],
+                        '_id': {'$ne': ObjectId(update_data['_id'])}
+                    }, {'$inc': {'navigation_order': 1}})
+                elif new_order > current_order:
+                    db['Page'].update_many({
+                        'navigation_order': {'$gt': current_order, '$lte': new_order},
+                        'navigation_id': update_data['navigation_id'],
+                        '_id': {'$ne': ObjectId(update_data['_id'])}
+                    }, {'$inc': {'navigation_order': -1}})
                 return jsonify({'status': 'success', 'message': f'{update_data["name"]} successfully updated.'}), 200
 
             else:
