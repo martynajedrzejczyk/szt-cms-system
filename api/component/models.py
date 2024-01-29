@@ -2,10 +2,12 @@ from bson import ObjectId
 from flask import jsonify, request, abort
 from app import db
 
+
 def convert_object_ids(components):
     for component in components:
         component['_id'] = str(component['_id'])
     return components
+
 
 class Component:
 
@@ -31,7 +33,7 @@ class Component:
                 return jsonify({'status': 'error', 'message': 'Component not found'}), 400
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)}), 400
-        
+
     @staticmethod
     def readByPageId():
         try:
@@ -88,8 +90,8 @@ class Component:
         try:
             update_data = request.get_json()
 
-            current_order = update_data['order_number']
-
+            current_order = db['Component'].find_one({'_id': ObjectId(update_data['_id'])})['order_number']
+            new_order = update_data['order_number']
             result = db['Component'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
                 'page_id': update_data['page_id'],
                 'order_number': update_data['order_number'],
@@ -101,11 +103,18 @@ class Component:
             }})
 
             if result.modified_count > 0:
-                db['Component'].update_many({
-                    'order_number': {'$gte': current_order},
-                    'page_id': update_data['page_id'],
-                    '_id': {'$ne': ObjectId(update_data['_id'])}
-                }, {'$inc': {'order_number': 1}})
+                if new_order < current_order:
+                    db['Component'].update_many({
+                        'order_number': {'$gte': new_order, '$lt': current_order},
+                        'page_id': update_data['page_id'],
+                        '_id': {'$ne': ObjectId(update_data['_id'])}
+                    }, {'$inc': {'order_number': 1}})
+                elif new_order > current_order:
+                    db['Component'].update_many({
+                        'order_number': {'$gt': current_order, '$lte': new_order},
+                        'page_id': update_data['page_id'],
+                        '_id': {'$ne': ObjectId(update_data['_id'])}
+                    }, {'$inc': {'order_number': -1}})
 
                 return jsonify({'status': 'success', 'message': f'Component successfully updated.'}), 200
             else:
@@ -123,7 +132,7 @@ class Component:
             if result.deleted_count > 0:
                 db['Component'].update_many({
                     'order_number': {'$gte': current_order},
-                    'page_id': data['page_id'],},
+                    'page_id': data['page_id'], },
                     {'$inc': {'order_number': -1}})
                 return jsonify({'status': 'success', 'message': f'Component {data["_id"]} deleted successfully'}), 200
             else:

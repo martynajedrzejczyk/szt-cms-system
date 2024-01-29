@@ -45,3 +45,13 @@ export const deleteComponent = async (id, order_number, page_id) => {
     console.log(response)
     return response.data;
 }
+
+export const deleteNavigation = async (id, order, parent_id) => {
+    console.log(id, order, parent_id)
+    const response = await axiosWithCookies.delete(`${databaseURL}navigation`, {
+        data: { "_id": id, order, parent_id},
+        headers: { "Content-Type": "application/json" },
+    });
+    console.log(response)
+    return response.data;
+}
