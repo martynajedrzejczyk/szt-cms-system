@@ -26,7 +26,7 @@ const Navigations = () => {
 
   const handleChangeNavigation = (name, order, parent_id, visible) => {
     console.log(popupInfo.id, name, order, parent_id, visible)
-    putNavigation(popupInfo.id, name, order, parent_id,  visible).then(() => {
+    putNavigation(popupInfo.id, name, order, parent_id, visible).then(() => {
       loadData();
       setPopupOpen(false);
     })
@@ -52,7 +52,7 @@ const Navigations = () => {
       setRows(data.map((navigation) => {
         return {
           _id: navigation._id?.$oid,
-          name: navigation.name, 
+          name: navigation.name,
           order: navigation.order,
           visible: navigation.visible ? 'tak' : 'nie',
           parent_id: data.find((nav) => nav?._id?.$oid === navigation?.parent_id?.$oid)?.name || 'brak',
@@ -87,7 +87,7 @@ const Navigations = () => {
           )
         }
       })
-     )
+      )
     })
   }
 
@@ -98,9 +98,9 @@ const Navigations = () => {
 
   const columns = [
     { key: 'name', label: 'Nazwa', _props: { scope: 'col' }, _style: { width: '40%' } },
-    { key: 'order', label: 'Kolejność', _props: { scope: 'col' }},
-    {key: 'visible', label: 'Widoczność', _props: { scope: 'col' } },
-    {key: 'parent_id', label: 'ID Rodzica', _props: { scope: 'col' }, _style: { width: '40%' } },
+    { key: 'order', label: 'Kolejność', _props: { scope: 'col' } },
+    { key: 'visible', label: 'Widoczność', _props: { scope: 'col' } },
+    { key: 'parent_id', label: 'ID Rodzica', _props: { scope: 'col' }, _style: { width: '40%' } },
     { key: 'edit', label: ' ', _props: { scope: 'col' }, _style: { width: '1%' } },
     { key: 'delete', label: ' ', _props: { scope: 'col' }, _style: { width: '1%' } },
   ]

@@ -19,3 +19,52 @@
 .herobanner-text {
     overflow: auto;
 }
+
+.services-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .services-tile {
+    flex: 0 0 calc(33.333% - 40px); /* 33.333% szerokości z odstępem 20px */
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .services-tile:hover {
+    transform: scale(1.05);
+  }
+  
+  .service-name {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #3498db; /* Inny kolor dla nazwy */
+  }
+  
+  .details-container {
+    background-color: #fff;
+  }
+  
+  .service-description,
+  .service-price {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
+  .service-price {
+    color: #e74c3c; /* Inny kolor dla ceny */
+  }
+
+  .service-description {
+    height: 100px;
+    overflow: auto;
+  }
+  .services-header {
+    text-align: left;
+    width: 100%;
+  }
