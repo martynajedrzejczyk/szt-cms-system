@@ -87,6 +87,9 @@ export const putNavigation = async (id, name, order, parent_id, visible) => {
     if (visible === undefined) {
         visible = false;
     }
+    if (parent_id === "Brak" || parent_id === undefined) {
+        parent_id = null;
+    }
     order = parseInt(order);
     console.log(id, name, order, parent_id, visible)
     // const user_id = ReactSession.get("user").id;

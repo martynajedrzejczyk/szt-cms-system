@@ -38,6 +38,8 @@ import OpinionForm from "./Presentation/components/OpinionForm";
 import { postOpinion } from "api/postData";
 // import Team from "./LandingPages/AboutUs/sections/Team";
 import ContactUs from "./LandingPages/ContactUs";
+import Team from "./LandingPages/AboutUs/sections/Team";
+import ServicesComponent from "./components/ServicesComponent";
 
 const ExportedPage = ({ page_id }) => {
     const { pathname } = useLocation();
@@ -222,6 +224,14 @@ const ExportedPage = ({ page_id }) => {
                             return (<OpinionForm onSubmit={sendOpinion} key={index} />)
                         } else if (component.component_type === "Formularz kontaktowy") {
                             return (<ContactUs key={index} />)
+                        } else if (component.component_type === "Pracownicy") {
+                            return (<Team key={index} />)
+                        } else if (component.component_type === "Usługi") {
+
+                            return (
+                                <ServicesComponent key={index} />
+                                // <div className="services-container" key={index}>uslugi</div>
+                            )
                         }
                     }
                 })
