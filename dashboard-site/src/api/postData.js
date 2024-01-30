@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { databaseURL } from './url';
 import { ReactSession } from 'react-client-session'
+// import { parseInt } from 'core-js/library/fn/number';
 
 const axiosWithCookies = axios.create({
     // withCredentials: true
@@ -110,10 +111,10 @@ export const postComponent = async (page_id, propTextShort, propTextMid, propTex
 }
 
 export const postNavigation = async (name, order, parent_id, visible) => {
-    if(visible === undefined)
-    {
+    if (visible === undefined) {
         visible = false;
     }
+    order = parseInt(order);
     const user_id = ReactSession.get("user").id;
     const response = await axiosWithCookies.post(`${databaseURL}navigation`, {
         name,
