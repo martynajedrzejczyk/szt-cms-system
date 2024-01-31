@@ -13,3 +13,14 @@
   height: 400px;
   object-fit: cover;
 }
+
+.carousel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+    margin-bottom: 10px;
+    width: 500px;
+    height: 530px;
+}

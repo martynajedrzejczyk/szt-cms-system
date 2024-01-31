@@ -25,12 +25,28 @@ import MKTypography from "components/MKTypography";
 import HorizontalTeamCard from "examples/Cards/TeamCards/HorizontalTeamCard";
 
 // Images
-import team1 from "assets/images/team-5.jpg";
-import team2 from "assets/images/bruce-mars.jpg";
-import team3 from "assets/images/ivana-squares.jpg";
-import team4 from "assets/images/ivana-square.jpg";
+import { useEffect, useState } from "react";
+import { getEmployees } from "api/getData";
+import { getCities } from "api/getData";
 
 function Team() {
+
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    getEmployees().then((emps) => {
+      getCities().then((cities) => {
+        console.log(cities)
+        emps.forEach((emp) => {
+          emp.city = cities.find((city) => city._id === emp.city).name;
+          setEmployees(emps);
+        })
+      })
+      console.log(emps);
+    })
+  }, []
+  );
+
   return (
     <MKBox
       component="section"
@@ -45,51 +61,23 @@ function Team() {
         <Grid container>
           <Grid item xs={12} md={8} sx={{ mb: 6 }}>
             <MKTypography variant="h3" color="black">
-              Poznaj nasz zespół // todo - filtrowanie po miescie
+              Poznaj nasz zespół
             </MKTypography>
           </Grid>
         </Grid>
         <Grid container spacing={3}>
-          <Grid item xs={12} lg={6}>
-            <MKBox mb={1}>
-              <HorizontalTeamCard
-                image={team1}
-                name="Emma Roberts"
-                position={{ color: "info", label: "UI Designer" }}
-                description="Artist is a term applied to a person who engages in an activity deemed to be an art."
-              />
-            </MKBox>
-          </Grid>
-          <Grid item xs={12} lg={6}>
-            <MKBox mb={1}>
-              <HorizontalTeamCard
-                image={team2}
-                name="William Pearce"
-                position={{ color: "info", label: "Boss" }}
-                description="Artist is a term applied to a person who engages in an activity deemed to be an art."
-              />
-            </MKBox>
-          </Grid>
-          <Grid item xs={12} lg={6}>
-            <MKBox mb={{ xs: 1, lg: 0 }}>
-              <HorizontalTeamCard
-                image={team3}
-                name="Ivana Flow"
-                position={{ color: "info", label: "Athlete" }}
-                description="Artist is a term applied to a person who engages in an activity deemed to be an art."
-              />
-            </MKBox>
-          </Grid>
-          <Grid item xs={12} lg={6}>
-            <MKBox mb={{ xs: 1, lg: 0 }}>
-              <HorizontalTeamCard
-                image={team4}
-                name="Marquez Garcia"
-                position={{ color: "info", label: "JS Developer" }}
-                description="Artist is a term applied to a person who engages in an activity deemed to be an art."
-              />
-            </MKBox>
-          </Grid>
+          {employees.map((employee) => (employee.visible &&
+            <Grid key={employee._id} item xs={12} lg={6}>
+              <MKBox mb={1}>
+                <HorizontalTeamCard
+                  image={`http://localhost:5000/image?name=${employee.image}`}
+                  name={employee.name + " " + employee.surname}
+                  position={{ color: "info", label: employee.city }}
+                  description={employee.description}
+                />
+              </MKBox>
+            </Grid>
+          ))}
         </Grid>
       </Container>
     </MKBox>

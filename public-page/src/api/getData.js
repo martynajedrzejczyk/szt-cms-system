@@ -36,3 +36,23 @@ export const getImage = async (image_id) => {
     const response = await axiosWithCookies.get(`${databaseURL}image?name=${image_id}`, { responseType: 'blob' });
     return response;
 }
+
+export const getOpinions = async () => {
+    const response = await axiosWithCookies.get(`${databaseURL}opinions`);
+    return response.data;
+};
+
+export const getEmployees = async () => {
+    const response = await axiosWithCookies.get(`${databaseURL}employees`);
+    return response.data;
+}
+
+export const getCities = async () => {
+    const response = await axiosWithCookies.get(`${databaseURL}cities`);
+    return response.data;
+}
+
+export const getServices = async () => {
+    const response = await axiosWithCookies.get(`${databaseURL}services`);
+    return response.data;
+}

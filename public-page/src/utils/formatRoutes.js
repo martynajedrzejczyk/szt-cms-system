@@ -34,6 +34,7 @@ export function createRoutes(navigations, pages) {
         // Add pages
         const pages = findPages(nav._id.$oid);
         pages.forEach(page => {
+            if (page.visible === false) return;
             route.collapse.push({
                 name: page.name,
                 route: `/${nav.name}/${page.endpoint}`,
