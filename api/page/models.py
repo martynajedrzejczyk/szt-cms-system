@@ -75,6 +75,9 @@ class Page:
             current_order = db['Page'].find_one({'_id': ObjectId(update_data['_id'])})['navigation_order']
             new_order = update_data['navigation_order']
 
+            if db['Page'].count_documents({'_id': ObjectId(update_data.get('page_id'))}) == 0:
+                return jsonify({'status': 'navigation', 'message': 'Selected navigation doesnt exist.'}), 200
+
             result = db['Page'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
                 'name': update_data['name'],
                 'endpoint': update_data['endpoint'],

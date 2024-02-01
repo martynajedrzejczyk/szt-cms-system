@@ -115,7 +115,10 @@ const PageCreator = () => {
                 setMode("edit")
                 setCurrPageId(response.page_id)
                 navigate('/pageEditor/' + response.page_id, { state: { mode: 'edit' } });
-            } else {
+            } else if (response.status === "navigation") {
+                alert("Wybrana sekcja w nawigacji nie istnieje")
+            }
+            else {
                 alert("Błąd podczas dodawania strony")
             }
         })
@@ -279,6 +282,8 @@ const PageCreator = () => {
             if (response.status === "success") {
                 alert("Zapisano właściwości strony")
                 loadData();
+            } else if (response.status === "navigation") {
+                alert("Wybrana sekcja w nawigacji nie istnieje")
             } else {
                 alert("Błąd podczas zapisywania właściwości strony")
             }

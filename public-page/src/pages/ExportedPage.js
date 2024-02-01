@@ -80,6 +80,9 @@ const ExportedPage = ({ page_id }) => {
             console.log(author, content, rating);
             postOpinion(author, content, rating).then((res) => {
                 console.log(res);
+                if (res.status === 'stars error') {
+                    alert('Nieprawidłowa ocena! Ilość gwiazdek powinna wynosić od 1 do 5.');
+                }
             }
             )
         }

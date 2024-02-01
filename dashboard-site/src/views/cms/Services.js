@@ -31,7 +31,10 @@ const Services = () => {
   }
 
   const handlePostService = (name, visible, description, price) => {
-    postService(name, visible, description, price).then(() => {
+    postService(name, visible, description, price).then((res) => {
+      if (res.status === 'price') {
+        alert('Nieprawidłowa cena! Cena powinna być liczbą.');
+      }
       loadData();
       setPopupAddOpen(false);
       console.log('dodano usługę')
@@ -39,9 +42,12 @@ const Services = () => {
   }
 
   const handleChangeService = (id, name, visible, description, price) => {
-    putService(id, name, visible, description, price).then(() => {
+    putService(id, name, visible, description, price).then((res) => {
       loadData();
       setPopupOpen(false);
+      if (res.status === 'price') {
+        alert('Nieprawidłowa cena! Cena powinna być liczbą.');
+      }
       console.log('zmieniono usługę')
     })
   }
