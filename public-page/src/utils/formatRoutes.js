@@ -28,6 +28,7 @@ export function createRoutes(navigations, pages) {
         // Add child navigations
         const collapse = findCollapse(nav._id.$oid);
         collapse.forEach(child => {
+            if (child.visible === false) return;
             route.collapse.push(createRoute(child));
         });
 

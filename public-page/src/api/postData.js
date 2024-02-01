@@ -6,6 +6,7 @@ const axiosWithCookies = axios.create({
 });
 
 export const postOpinion = async (author_nick, description, stars) => {
-    const response = await axiosWithCookies.post(`${databaseURL}opinion`, { author_nick, description, stars });
+    const response = await axiosWithCookies.post(`${databaseURL}opinion`,
+        { author_nick, description, stars });
     return response.data;
 }

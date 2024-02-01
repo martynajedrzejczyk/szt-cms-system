@@ -102,15 +102,7 @@ function Presentation() {
             >
               Wyprowadzanie piesków{" "}
             </MKTypography>
-            <MKTypography
-              variant="body1"
-              color="white"
-              textAlign="center"
-              px={{ xs: 6, lg: 12 }}
-              mt={1}
-            >
-              todo - krotki opis firmy 1-2 zdania z cmsa
-            </MKTypography>
+
           </Grid>
         </Container>
       </MKBox>
