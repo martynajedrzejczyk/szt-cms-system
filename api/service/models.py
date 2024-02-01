@@ -41,6 +41,8 @@ class Service:
             if ('name' not in data or 'visible' not in data or 'description'
             not in data or 'price' not in data):
                 return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
+            if not isinstance(data['price'], float):
+                return jsonify({'status': 'price', 'message': 'price is not float'}), 200
 
             result = db['Service'].insert_one({
                 'name': data['name'],
@@ -63,6 +65,9 @@ class Service:
     def update():
         try:
             update_data = request.get_json()
+
+            if not isinstance(update_data['price'], float):
+                return jsonify({'status': 'price', 'message': 'price is not float'}), 200
 
             result = db['Service'].update_one({'_id': ObjectId(update_data['_id'])}, {'$set': {
                 'name': update_data['name'],
