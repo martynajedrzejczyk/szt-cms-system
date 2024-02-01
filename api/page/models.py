@@ -41,6 +41,10 @@ class Page:
             if 'name' not in data or 'endpoint' not in data or 'visible' not in data or 'navigation_id' not in data:
                 return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
 
+            if db['Page'].count_documents({'_id': ObjectId(data.get('page_id'))}) == 0:
+                return jsonify({'status': 'navigation', 'message': 'Selected navigation doesnt exist.'}), 200
+
+
             total_pages_same_nav_id = db['Page'].count_documents({'navigation_id': data['navigation_id']})
             navigation_order = total_pages_same_nav_id - 1
 

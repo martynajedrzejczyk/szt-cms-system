@@ -42,6 +42,8 @@ class Opinion:
             required_fields = ['stars', 'author_nick', 'description']
             if not all(field in data for field in required_fields):
                 return jsonify({'status': 'error', 'message': 'Missing required fields'}), 400
+            if int(data['stars']) < 1 or int(data['stars']) > 5:
+                return jsonify({'status': 'stars error', 'message': 'Stars number should be between 1 and 5'}), 200
 
             result = db['Opinion'].insert_one({
                 'stars': data['stars'],
